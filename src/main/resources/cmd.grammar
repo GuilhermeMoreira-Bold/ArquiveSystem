@@ -1,0 +1,5 @@
+CommandLine -> CommandLine (Command | ';')*
+Command -> CommandName Arguments?
+Arguments -> IDENTIFIER*
+CommandName -> "mkdir" | "rm" | "ls" | "cd" | "." | ".." | "touch" | "pwd"
+IDENTIFIER -> string, number
