@@ -30,12 +30,12 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
     private int current;
     @Override
     public Class<CMD> getInputType() {
-        return null;
+        return CMD.class;
     }
 
     @Override
     public Class<ScannedData> getOutputType() {
-        return null;
+        return ScannedData.class;
     }
 
     @Override
@@ -47,11 +47,6 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
     public ScannedData pass(CMD input) {
         resetInternalState(input);
         scanTokens();
-        for (Token token : tokens
-             ) {
-            System.out.println(token.toString());
-
-        }
         return new ScannedData(tokens);
     }
     private void scanTokens() {
@@ -100,7 +95,7 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
     }
 
     private void identifier() {
-        while(isAlphaNumeric(peek())) advance();
+        while(isAlphaNumeric(peek()) || peek() == '.') advance();
         String value = source.substring(start, current);
         TokenType type;
         type = TokenType.IDENTIFIER;

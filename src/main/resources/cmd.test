@@ -1,1 +1,1 @@
-mkdir oi; mkdir Athos; pwd;ls; touch athos;rmdir;cd athosLandia
+mkdir oi; touch athos.txt; ls; rmdir oi; ls; pwd; mkdir oi; cd oi; mkdir athos; cd athos; pwd

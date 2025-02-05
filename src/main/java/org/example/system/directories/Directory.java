@@ -1,19 +1,27 @@
 package org.example.system.directories;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.example.system.arquives.Arquive;
 
 public class Directory {
     String name;
     List<Arquive> data;
-    List<Directory> childrens;
+    Map<String,Directory> childrens;
     Directory parent;
 
-    public Directory(List<Arquive> data,String name, List<Directory> childrens, Directory parent) {
+    public Map<String, Directory> getChildrens() {
+        return childrens;
+    }
+
+    public Directory(String name, Directory parent) {
         this.name = name;
-        this.childrens = childrens;
         this.parent = parent;
-        this.data = data;
+        this.childrens = new HashMap<>();
+        this.data = new ArrayList<>();
     }
 
     public void addData(Arquive arquive) {
@@ -23,11 +31,11 @@ public class Directory {
         data.remove(arquive);
     }
 
-    public void addSubdirectory(Directory subdirectory) {
-        childrens.add(subdirectory);
+    public void addSubdirectory(String name,Directory subdirectory) {
+        childrens.put(name,subdirectory);
     }
     public void removeSubdirectory(Directory subdirectory) {
-        childrens.remove(subdirectory);
+        childrens.remove(subdirectory.name);
     }
 
     public String getName() {
@@ -36,10 +44,6 @@ public class Directory {
 
     public List<Arquive> getData() {
         return data;
-    }
-
-    public List<Directory> getChildrens() {
-        return childrens;
     }
 
     public Directory getParent() {

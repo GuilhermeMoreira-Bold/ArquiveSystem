@@ -17,12 +17,12 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
 
     @Override
     public Class<ScannedData> getInputType() {
-        return null;
+        return ScannedData.class;
     }
 
     @Override
     public Class<ParsedData> getOutputType() {
-        return null;
+        return ParsedData.class;
     }
 
     @Override
@@ -40,38 +40,19 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
             commands.add(command());
 
         }
-        for (CommandNode command : commands
-             ) {
-            System.out.println(command.toString());
-
-        }
         return new ParsedData(commands);
     }
 
     private CommandNode command(){
 
        if(match(TokenType.CD)){
-           if(!check(TokenType.IDENTIFIER))
-           {
-               throw new RuntimeException("Not a valid directory name " + peek().lexeme + ", or missing one");
-           }
-            String directory = peek().lexeme;
-           advance();
-
-            return new CommandCD(directory);
+            return commandCD();
        }
        if(match(TokenType.MKDIR)){
-           check(TokenType.IDENTIFIER);
-           String directory = peek().lexeme;
-            advance();
-           return new CommandMKDIR(directory);
+           return commandMKDIR();
        }
        if(match(TokenType.TOUCH)){
-           check(TokenType.IDENTIFIER);
-           String directory = peek().lexeme;
-           advance();
-
-           return new CommandTOUCH(directory);
+           return commandTouch();
        }
        if(match(TokenType.LS)){
         return new CommandLS();
@@ -80,9 +61,41 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
          return new CommandPWD();
        }
        if(match(TokenType.RMDIR)){
-           return new CommandRMDIR();
+           return commandRMDIR();
        }
         throw new RuntimeException("Unexpected token: " + peek().lexeme);
+    }
+
+    private CommandNode commandRMDIR() {
+        check(TokenType.IDENTIFIER);
+        String name = peek().lexeme;
+        advance();
+        return new CommandRMDIR(name);
+    }
+
+    private CommandNode commandTouch() {
+        check(TokenType.IDENTIFIER);
+        String directory = peek().lexeme;
+        advance();
+
+        return new CommandTOUCH(directory);
+    }
+
+    private CommandCD commandCD(){
+        if(!check(TokenType.IDENTIFIER))
+        {
+            throw new RuntimeException("Not a valid directory name " + peek().lexeme + ", or missing one");
+        }
+        String directory = peek().lexeme;
+        advance();
+        return new CommandCD(directory);
+    }
+
+    private CommandMKDIR commandMKDIR(){
+        check(TokenType.IDENTIFIER);
+        String directory = peek().lexeme;
+        advance();
+        return new CommandMKDIR(directory);
     }
     private Token peek(){
 

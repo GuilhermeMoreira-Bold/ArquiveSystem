@@ -1,21 +1,34 @@
 package org.example;
 
 //import org.example.parser.Parser;
-import org.example.compiler.parser.Parser;
-import org.example.compiler.pipeline.CompilationPipeline;
 import org.example.compiler.pipeline.execptions.UnexpectInputType;
-import org.example.compiler.scanner.Scanner;
-import org.example.compiler.util.CMD;
+import org.example.system.disk.Entry;
+import org.example.system.disk.FileAllocationTable;
+import org.example.system.disk.VirtualDisk;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) throws UnexpectInputType {
-        CompilationPipeline pipilene = new CompilationPipeline();
-        CMD cmd = new CMD("/home/guilherme/IdeaProjects/ARQUIVES_SO/src/main/resources/cmd.test");
+    public static void main(String[] args) throws UnexpectInputType, IOException {
+//        CompilationPipeline pipilene = new CompilationPipeline();
+//        CMD cmd = new CMD("/home/guilherme/IdeaProjects/ARQUIVES_SO/src/main/resources/cmd.test");
+//        FileSystem fl = new FileSystem(new Directory("root",null));
+//        pipilene.insertStage(new Scanner()).insertStage(new Parser()).insertStage(new CommandExecutor(fl));
+//
+//        pipilene.execute(cmd);
+        VirtualDisk disk = new VirtualDisk();
+        disk.createDisk();
+        Entry test = new Entry("Oi athos", (byte) 0,1, (byte) 0);
+        Entry test2 = new Entry("Oi athos 2", (byte) 0,1, (byte) 0);
 
-        pipilene.insertStage(new Scanner()).insertStage(new Parser());
+        disk.writeEntry(0, test);
+        disk.writeEntry(0, test2);
 
-        pipilene.execute(cmd);
+
+        System.out.println(new String (disk.readDataAreaWithClusterSize(0), StandardCharsets.UTF_8));
+
     }
 }

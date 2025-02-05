@@ -25,7 +25,7 @@ public class CompilationPipeline {
         IOComponent currentInput = input;
 
         for (CompilationPass<? extends IOComponent, ? extends IOComponent> pass : passes) {
-//            checkInputType(pass, currentInput);
+            checkInputType(pass, currentInput);
             System.out.println("Executing " + pass.getDebugName());
             currentInput = runPass(pass, currentInput);
         }
@@ -33,9 +33,9 @@ public class CompilationPipeline {
 
     @SuppressWarnings("unchecked")
     private <I extends IOComponent<I>, O extends IOComponent<O>> IOComponent runPass(CompilationPass<I, O> pass, IOComponent input) {
-//        if (!pass.getInputType().isInstance(input)) {
-//            throw new IllegalArgumentException("Input type mismatch. Expected: " + pass.getInputType() + ", but got: " + input.getClass());
-//        }
+        if (!pass.getInputType().isInstance(input)) {
+            throw new IllegalArgumentException("Input type mismatch. Expected: " + pass.getInputType() + ", but got: " + input.getClass());
+        }
         return pass.pass((I) input);
     }
 
