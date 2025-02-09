@@ -33,6 +33,7 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
         if (index < 0 || index >= TOTAL_BLOCKS) {
             throw new IndexOutOfBoundsException("Index " + index + " out of bounds for data area size " + TOTAL_BLOCKS);
         }
+        System.out.println("Reading data area at: " + index * CLUSTER + DATA_AREA_OFFSET);
         raf.seek((long) index * CLUSTER + DATA_AREA_OFFSET);
         byte[] content = new byte[CLUSTER];
         raf.readFully(content);
@@ -57,6 +58,13 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
         raf.write(value);
     }
 
+    @Override
+    public void close() throws IOException {
+        if (raf != null) {
+            raf.close();
+        }
+    }
+
     private void createDataArea() throws IOException {
         raf.seek(DATA_AREA_OFFSET);
         byte[] emptyData = new byte[TOTAL_BLOCKS];
@@ -64,12 +72,5 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
             emptyData[i] = FREE_AREA;
         }
         raf.write(emptyData);
-    }
-
-    @Override
-    public void close() throws IOException {
-        if (raf != null) {
-            raf.close();
-        }
     }
 }

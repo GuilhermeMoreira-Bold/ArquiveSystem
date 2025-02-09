@@ -7,7 +7,6 @@ import org.example.system.disk.handlers.DataAreaHandler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Random;
 
 import static org.example.system.disk.DiskUtils.*;
 
@@ -17,10 +16,14 @@ public class DataArea {
     public DataArea(RandomAccessFile raf,boolean isNew) throws IOException {
         this.IOHandler = new DataAreaHandler(raf);
         IOHandler.initialize(isNew);
+        initialize(isNew);
     }
 
-    public void intialize(boolean isNew) throws IOException {
+    public void initialize(boolean isNew) throws IOException {
         IOHandler.initialize(isNew);
+        if (isNew) {
+            createRootDirTable();
+        }
     }
 
 
@@ -32,42 +35,6 @@ public class DataArea {
             throw new RuntimeException(e);
         }
     }
-    public Directory getRootDir() throws IOException {
-        byte[] buffer = IOHandler.readAt(0);
-        Entry rootEntry = Entry.toEntry(buffer);
-
-        Directory root = new Directory(rootEntry.getName(), null, rootEntry.getStatus());
-        addDataToDir(root, 0);
-        return root;
-    }
-
-    private void addDataToDir(Directory dir, int dirCluster) throws IOException {
-        byte[] buffer = IOHandler.readAt(dirCluster);
-        int offset = ENTRY_SIZE;
-
-
-        while (offset + ENTRY_SIZE <= buffer.length) {
-            byte[] entryBytes = new byte[ENTRY_SIZE];
-
-            System.arraycopy(buffer, offset, entryBytes, 0, ENTRY_SIZE);
-
-            if (entryBytes[0] == FREE_AREA) {
-                offset += ENTRY_SIZE; // Pula a área livre
-                continue;
-            }
-
-            Entry entry = Entry.toEntry(entryBytes);
-
-            if (entry.getType() == 0) { // Verifica se é dir
-                dir.addSubdirectory(entry.getName(), new Directory(entry.getName(), dir, entry.getStatus()));
-            }else{
-                dir.addData(new Arquive(entry.getName(), "", entry.getSize()));
-            }
-
-            offset += ENTRY_SIZE;
-        }
-    }
-
     public void writeEntry(int cluster, Entry entry) throws IOException {
             byte[] clusterContent = IOHandler.readAt(cluster);
             boolean hasSpace = true;
@@ -85,11 +52,22 @@ public class DataArea {
                         IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET + ((long) cluster * CLUSTER) + i));
                         return;
                     }
-
                 }
             }
         if (!hasSpace) {
             throw new IOException("No space available in cluster " + cluster);
         }
+    }
+
+
+    public byte[] readAllDisk() throws IOException {
+        return IOHandler.read();
+    }
+
+    public byte[] readEntry(int cluster) throws IOException {
+        return IOHandler.readAt(cluster);
+    }
+    public byte[] readEntryAt(int clusterId) throws IOException {
+        return IOHandler.readAt(clusterId);
     }
 }

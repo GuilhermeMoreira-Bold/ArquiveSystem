@@ -13,17 +13,27 @@ public class Directory {
     Map<String,Directory> childrens;
     Directory parent;
     byte status;
+    int staterBlock;
 
     public Map<String, Directory> getChildrens() {
         return childrens;
     }
 
-    public Directory(String name, Directory parent,byte status) {
+    public Directory(String name, Directory parent,byte status, int staterBlock) {
         this.name = name;
         this.childrens = new HashMap<>();
         this.data = new ArrayList<>();
         this.status = status;
         this.parent = parent;
+        this.staterBlock = staterBlock;
+    }
+
+    public int getStaterBlock() {
+        return staterBlock;
+    }
+
+    public byte getStatus() {
+        return status;
     }
 
     public void addData(Arquive arquive) {

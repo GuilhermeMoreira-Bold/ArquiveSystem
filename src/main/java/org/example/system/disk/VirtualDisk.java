@@ -1,5 +1,6 @@
 package org.example.system.disk;
 
+import org.example.system.arquives.Arquive;
 import org.example.system.directories.Directory;
 
 import java.io.*;
@@ -7,8 +8,6 @@ import java.io.*;
 import static org.example.system.disk.DiskUtils.*;
 
 public class VirtualDisk {
-    Directory root;
-    Directory current;
     private FileAllocationTable fat;
     private DataArea dataArea;
 
@@ -23,11 +22,11 @@ public class VirtualDisk {
     }
 
     private void initializeDisk(boolean isNew) throws IOException {
-        try (RandomAccessFile raf = new RandomAccessFile(DISK_NAME, "rw")) {
-            fat = new FileAllocationTable(raf, isNew);
-            dataArea = new DataArea(raf, isNew);
-        }
+        RandomAccessFile raf = new RandomAccessFile(DISK_NAME, "rw");
+        fat = new FileAllocationTable(raf, isNew);
+        dataArea = new DataArea(raf, isNew);
     }
+
 
     private void mountNewDisk() throws IOException {
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(DISK_NAME))) {
@@ -47,12 +46,22 @@ public class VirtualDisk {
             System.out.println("Data area starter point: " + DATA_AREA_OFFSET);
         }
     }
-    public Directory getCurrent() {
-        return current;
-    }
 
-    public void setCurrent(Directory current) {
-        this.current = current;
-    }
+   public void addArquive(Arquive arquive) throws IOException {
+    //TODO to add a arquive
+   }
+
+   public void addSubDir(int parentStaterBlock,Entry subDir) throws IOException {
+        dataArea.writeEntry(parentStaterBlock,subDir);
+   }
+
+   public byte[] readArquive(int starterBlock) throws IOException {
+        //TODO for read arquives
+       return dataArea.readEntry(starterBlock);
+   }
+
+   public byte[] readDir(int clusterId) throws IOException {
+        return dataArea.readEntry(clusterId);
+   }
 
 }
