@@ -2,6 +2,7 @@ package org.example;
 
 //import org.example.parser.Parser;
 import org.example.compiler.pipeline.execptions.UnexpectInputType;
+import org.example.system.directories.Directory;
 import org.example.system.disk.Entry;
 import org.example.system.disk.FileAllocationTable;
 import org.example.system.disk.VirtualDisk;
@@ -20,15 +21,18 @@ public class Main {
 //
 //        pipilene.execute(cmd);
         VirtualDisk disk = new VirtualDisk();
-        disk.createDisk();
-        Entry test = new Entry("Oi athos", (byte) 0,1, (byte) 0);
-        Entry test2 = new Entry("Oi athos 2", (byte) 0,1, (byte) 0);
+
+
+        Entry test = new Entry("oi_athos", (byte) 0,1, (byte) 0,0);
+        Entry test2 = new Entry("HI ATHOS", (byte) 0,1, (byte) 0,0);
 
         disk.writeEntry(0, test);
         disk.writeEntry(0, test2);
+        Directory root =  disk.getRootDir();
 
-
-        System.out.println(new String (disk.readDataAreaWithClusterSize(0), StandardCharsets.UTF_8));
+        System.out.println(root.toString());
+//        System.out.println("Cluster 0: " + new String (disk.readDataAreaFromCluster(0)));
+//        System.out.println("Cluster 1: " + new String (disk.readDataAreaFromCluster(1), StandardCharsets.UTF_8));
 
     }
 }

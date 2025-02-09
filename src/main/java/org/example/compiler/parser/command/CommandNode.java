@@ -1,6 +1,6 @@
 package org.example.compiler.parser.command;
 
-import org.example.system.arquives.FileSystem;
+import org.example.system.FileSystem;
 
 public abstract class CommandNode {
 

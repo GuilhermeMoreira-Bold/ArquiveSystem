@@ -1,7 +1,7 @@
 package org.example.compiler.parser.command;
 
 import org.example.system.arquives.Arquive;
-import org.example.system.arquives.FileSystem;
+import org.example.system.FileSystem;
 
 import java.util.List;
 

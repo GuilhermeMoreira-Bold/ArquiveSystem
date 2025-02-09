@@ -12,16 +12,18 @@ public class Directory {
     List<Arquive> data;
     Map<String,Directory> childrens;
     Directory parent;
+    byte status;
 
     public Map<String, Directory> getChildrens() {
         return childrens;
     }
 
-    public Directory(String name, Directory parent) {
+    public Directory(String name, Directory parent,byte status) {
         this.name = name;
-        this.parent = parent;
         this.childrens = new HashMap<>();
         this.data = new ArrayList<>();
+        this.status = status;
+        this.parent = parent;
     }
 
     public void addData(Arquive arquive) {
@@ -49,4 +51,25 @@ public class Directory {
     public Directory getParent() {
         return parent;
     }
+
+    @Override
+    public String toString() {
+        if (parent != null) {
+            return "Directory{" +
+                    "name='" + name + '\'' +
+                    ", data=" + data +
+                    ", childrens=" + childrens +
+                    ", parent=" + parent.getName() +
+                    ", status=" + status +
+                    '}';
+        }
+        return "Directory{" +
+                "name='" + name + '\'' +
+                ", data=" + data +
+                ", childrens=" + childrens +
+                ", status=" + status +
+                '}';
+    }
+
+
 }

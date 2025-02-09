@@ -1,6 +1,6 @@
 package org.example.compiler.parser.command;
 
-import org.example.system.arquives.FileSystem;
+import org.example.system.FileSystem;
 import org.example.system.directories.Directory;
 
 import java.util.ArrayList;

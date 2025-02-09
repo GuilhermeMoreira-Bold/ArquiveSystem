@@ -3,7 +3,7 @@ package org.example.compiler.interpreter;
 import org.example.compiler.parser.ParsedData;
 import org.example.compiler.parser.command.CommandNode;
 import org.example.compiler.pipeline.pass.CompilationPass;
-import org.example.system.arquives.FileSystem;
+import org.example.system.FileSystem;
 
 import java.util.ArrayList;
 import java.util.List;
