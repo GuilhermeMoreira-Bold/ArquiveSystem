@@ -1,9 +1,6 @@
 package org.example.system.disk;
 
-import org.example.system.arquives.Arquive;
-import org.example.system.directories.Directory;
 import org.example.system.disk.handlers.DataAreaHandler;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -13,15 +10,15 @@ import static org.example.system.disk.DiskUtils.*;
 public class DataArea {
     private final DataAreaHandler IOHandler;
 
-    public DataArea(RandomAccessFile raf,boolean isNew) throws IOException {
+    public DataArea(RandomAccessFile raf,boolean exists) throws IOException {
         this.IOHandler = new DataAreaHandler(raf);
-        IOHandler.initialize(isNew);
-        initialize(isNew);
+        IOHandler.initialize(exists);
+        initialize(exists);
     }
 
-    public void initialize(boolean isNew) throws IOException {
-        IOHandler.initialize(isNew);
-        if (isNew) {
+    public void initialize(boolean exists) throws IOException {
+        IOHandler.initialize(exists);
+        if (!exists) {
             createRootDirTable();
         }
     }
@@ -30,33 +27,31 @@ public class DataArea {
     public void createRootDirTable() throws FileNotFoundException {
         try(RandomAccessFile raf = new RandomAccessFile(DISK_NAME, "r")){
             Entry root = new Entry("/", (byte)1,1, (byte) 1, 0);
-            IOHandler.writeAt (root.toBytes(),0);
+            IOHandler.writeAt(root.toBytes(),ROOT_DIRECTORY_TABLE_OFFSET);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
     }
     public void writeEntry(int cluster, Entry entry) throws IOException {
             byte[] clusterContent = IOHandler.readAt(cluster);
-            boolean hasSpace = true;
 
-            for (int i = 0; i <= clusterContent.length; i++) {
+            for (int i = 0; i < clusterContent.length; i++) {
                 byte c = clusterContent[i];
-                if (c ==  FREE_AREA) {
-                    for(int j = 0; j < 269; j++){
+                if (c == FREE_AREA) {
+                    boolean hasSpace = true;
+
+                    for (int j = 0; j < 269; j++) {
                         if (clusterContent[i + j] != FREE_AREA) {
                             hasSpace = false;
                             break;
                         }
                     }
-                    if(hasSpace){
+                    if (hasSpace) {
                         IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET + ((long) cluster * CLUSTER) + i));
                         return;
                     }
                 }
             }
-        if (!hasSpace) {
-            throw new IOException("No space available in cluster " + cluster);
-        }
     }
 
 

@@ -2,6 +2,7 @@ package org.example.system.disk.handlers;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 import static org.example.system.disk.DiskUtils.*;
 
@@ -14,7 +15,7 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
 
     @Override
     public byte[] initialize(boolean isNew) throws IOException {
-        if (isNew) {
+        if (!isNew) {
             createDataArea();
         }
         return read();
@@ -33,7 +34,6 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
         if (index < 0 || index >= TOTAL_BLOCKS) {
             throw new IndexOutOfBoundsException("Index " + index + " out of bounds for data area size " + TOTAL_BLOCKS);
         }
-        System.out.println("Reading data area at: " + index * CLUSTER + DATA_AREA_OFFSET);
         raf.seek((long) index * CLUSTER + DATA_AREA_OFFSET);
         byte[] content = new byte[CLUSTER];
         raf.readFully(content);
@@ -51,10 +51,10 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
 
     @Override
     public void writeAt(byte[] value, int index) throws IOException {
-        if (index < 0 || index >= TOTAL_BLOCKS) {
-            throw new IndexOutOfBoundsException("Index " + index + " out of bounds for data area size " + TOTAL_BLOCKS);
+        if (index < 0 || index >= DISK_SIZE) {
+            throw new IndexOutOfBoundsException("Index " + index + " out of bounds for data area size " + DISK_SIZE);
         }
-        raf.seek(index + DATA_AREA_OFFSET);
+        raf.seek(index);
         raf.write(value);
     }
 
@@ -68,9 +68,7 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
     private void createDataArea() throws IOException {
         raf.seek(DATA_AREA_OFFSET);
         byte[] emptyData = new byte[TOTAL_BLOCKS];
-        for (int i = 0; i < TOTAL_BLOCKS; i++) {
-            emptyData[i] = FREE_AREA;
-        }
+        Arrays.fill(emptyData, FREE_AREA);
         raf.write(emptyData);
     }
 }

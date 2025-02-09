@@ -3,6 +3,7 @@ package org.example.compiler.parser.command;
 import org.example.system.FileSystem;
 import org.example.system.directories.Directory;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class CommandMKDIR extends CommandNode{
@@ -19,7 +20,7 @@ public class CommandMKDIR extends CommandNode{
     }
 
     @Override
-    public String execute(FileSystem context) {
+    public String execute(FileSystem context) throws IOException {
         if(context.getCurrent().getChildrens() != null) {
             for (Map.Entry<String, Directory> dirs :
                     context.getCurrent().getChildrens().entrySet()) {
@@ -28,7 +29,7 @@ public class CommandMKDIR extends CommandNode{
                 }
             }
         }
-//        context.getCurrent().addSubdirectory(dir,new Directory(dir, context.getCurrent()));
+        context.createDirectory(new Directory(dir,context.getCurrent(),(byte) 0,0));
         return "success";
     }
 }

@@ -5,6 +5,7 @@ import org.example.compiler.parser.command.CommandNode;
 import org.example.compiler.pipeline.pass.CompilationPass;
 import org.example.system.FileSystem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class CommandExecutor extends CompilationPass<ParsedData,CommandResult> {
     }
 
     @Override
-    public CommandResult pass(ParsedData input) {
+    public CommandResult pass(ParsedData input) throws IOException {
        commands = input.commands;
 
        for (CommandNode command : commands) {

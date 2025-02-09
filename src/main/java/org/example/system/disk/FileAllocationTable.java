@@ -13,14 +13,14 @@ public class FileAllocationTable {
 
     int[] fileClusters;
 
-    private final int FREE = 0XFF;
+    private final int FREE = -1;
     private final int EOF = -2;
 
     private final FatHandler IOHandler;
 
-    public FileAllocationTable(RandomAccessFile raf, boolean isNew) throws IOException {
+    public FileAllocationTable(RandomAccessFile raf, boolean exists) throws IOException {
       this.IOHandler = new FatHandler(raf);
-      fileClusters = IOHandler.initialize(isNew);
+      fileClusters = IOHandler.initialize(exists);
     }
 
     public List<Integer> findFileClusters(Entry entryFile) {

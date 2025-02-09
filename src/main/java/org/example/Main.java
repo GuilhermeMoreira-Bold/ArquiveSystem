@@ -1,16 +1,9 @@
 package org.example;
-
-//import org.example.parser.Parser;
 import org.example.compiler.pipeline.execptions.UnexpectInputType;
 import org.example.system.FileSystem;
 import org.example.system.directories.Directory;
-import org.example.system.disk.Entry;
-import org.example.system.disk.FileAllocationTable;
-import org.example.system.disk.VirtualDisk;
 
-import javax.imageio.stream.FileImageInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -24,6 +17,13 @@ public class Main {
 //        pipilene.execute(cmd);
 
         FileSystem fileSystem = new FileSystem();
+
+//        fileSystem.createDirectory(new Directory("Athos_teste", fileSystem.getCurrent(),(byte) 0,0));
+//        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 0,0));
+//        fileSystem.createDirectory(new Directory("Athos_teste_3", fileSystem.getCurrent(),(byte) 0,0));
+//        fileSystem.createDirectory(new Directory("Athos_teste_4", fileSystem.getCurrent(),(byte) 0,0));
+//        fileSystem.debugDataArea();
         System.out.println(fileSystem);
+
     }
 }

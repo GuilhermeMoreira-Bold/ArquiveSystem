@@ -14,17 +14,17 @@ public class VirtualDisk {
     public VirtualDisk(boolean exists, String path) throws IOException {
         DISK_NAME = path;
         if (exists) {
-            initializeDisk(false);
+            initializeDisk(true);
         } else {
             mountNewDisk();
-            initializeDisk(true);
+            initializeDisk(false);
         }
     }
 
-    private void initializeDisk(boolean isNew) throws IOException {
+    private void initializeDisk(boolean exists) throws IOException {
         RandomAccessFile raf = new RandomAccessFile(DISK_NAME, "rw");
-        fat = new FileAllocationTable(raf, isNew);
-        dataArea = new DataArea(raf, isNew);
+        fat = new FileAllocationTable(raf, exists);
+        dataArea = new DataArea(raf, exists);
     }
 
 
@@ -51,8 +51,10 @@ public class VirtualDisk {
     //TODO to add a arquive
    }
 
-   public void addSubDir(int parentStaterBlock,Entry subDir) throws IOException {
-        dataArea.writeEntry(parentStaterBlock,subDir);
+   public boolean addSubDir(int parentStaterBlock,Entry subDir) throws IOException {
+       subDir.setStartBlock(fat.addFileCluster(subDir));
+       dataArea.writeEntry(parentStaterBlock,subDir);
+       return true;
    }
 
    public byte[] readArquive(int starterBlock) throws IOException {

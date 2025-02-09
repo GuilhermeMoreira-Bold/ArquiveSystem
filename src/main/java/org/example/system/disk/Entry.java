@@ -55,8 +55,8 @@ public class Entry {
 
         byte[] nameBytes = new byte[255];
         buffer.get(nameBytes);
-        String name = new String(nameBytes).trim();
 
+        String name = new String(nameBytes).trim();
 
         int startBlock  = buffer.getInt();
         int parent = buffer.getInt();

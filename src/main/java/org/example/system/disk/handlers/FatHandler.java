@@ -13,8 +13,8 @@ public class FatHandler implements DiskIOHandler<int[]>,AutoCloseable {
     }
 
     @Override
-    public int[] initialize(boolean isNew) throws IOException {
-        if (isNew) {
+    public int[] initialize(boolean exists) throws IOException {
+        if (!exists) {
             createFatArea();
         }
         return getFat();
@@ -55,16 +55,15 @@ public class FatHandler implements DiskIOHandler<int[]>,AutoCloseable {
 
 
     private void createFatArea() throws IOException {
-
             raf.seek(FAT_INITIAL_OFFSET);
-            for(int i = 0; i < FAT_SIZE; i ++){
-                raf.writeInt(FREE_AREA);
+            raf.writeInt(-2); //EOF of root
+            for(int i = 0; i < FAT_SIZE -1; i ++){
+                raf.writeInt(-1);
             }
 
 
     }
     private int[] getFat() throws IOException {
-
             raf.seek(FAT_INITIAL_OFFSET);
             int[] list = new int[FAT_SIZE];
             for(int i = 0;i < FAT_SIZE; i ++){

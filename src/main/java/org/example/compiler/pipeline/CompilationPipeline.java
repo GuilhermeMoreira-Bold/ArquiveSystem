@@ -4,6 +4,7 @@ import org.example.compiler.pipeline.component.IOComponent;
 import org.example.compiler.pipeline.execptions.UnexpectInputType;
 import org.example.compiler.pipeline.pass.CompilationPass;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class CompilationPipeline {
         return this;
     }
 
-    public void execute(IOComponent input) throws UnexpectInputType {
+    public void execute(IOComponent input) throws UnexpectInputType, IOException {
         IOComponent currentInput = input;
 
         for (CompilationPass<? extends IOComponent, ? extends IOComponent> pass : passes) {
@@ -32,7 +33,7 @@ public class CompilationPipeline {
     }
 
     @SuppressWarnings("unchecked")
-    private <I extends IOComponent<I>, O extends IOComponent<O>> IOComponent runPass(CompilationPass<I, O> pass, IOComponent input) {
+    private <I extends IOComponent<I>, O extends IOComponent<O>> IOComponent runPass(CompilationPass<I, O> pass, IOComponent input) throws IOException {
         if (!pass.getInputType().isInstance(input)) {
             throw new IllegalArgumentException("Input type mismatch. Expected: " + pass.getInputType() + ", but got: " + input.getClass());
         }
