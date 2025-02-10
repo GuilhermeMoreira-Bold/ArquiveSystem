@@ -34,7 +34,7 @@ public class CommandMKDIR extends CommandNode{
             }
         }
 
-        int starterBlock = context.getDisk().addSubDir(context.getCurrent().getStaterBlock(),new Entry(dir.getName(), (byte) 1, 1, (byte) 0,context.getCurrent().getStaterBlock()));
+        int starterBlock = context.getDisk().addEntry(new Entry(dir.getName(), (byte) 1, 1, (byte) 0,context.getCurrent().getStaterBlock()));
         dir.setStaterBlock(starterBlock);
         context.getCurrent().addSubdirectory(dir.getName(), dir);
 

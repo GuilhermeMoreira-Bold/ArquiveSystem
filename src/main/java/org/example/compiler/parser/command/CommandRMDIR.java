@@ -23,7 +23,7 @@ public class CommandRMDIR extends CommandNode{
                 Entry entry = new Entry(d.getName(),d.getStaterBlock(),context.getCurrent().getStaterBlock(), 0,(byte)0,d.getStatus());
 
                 try{
-                    context.getDisk().removeDir(entry);
+                    context.getDisk().removeEntry(entry);
                 }catch (IOException e){
                     throw new RuntimeException(e);
                 }

@@ -1,1 +1,1 @@
-mkdir oi; mkdir oi_athos; rmdir oi; cd oi_athos; pwd;mkdir oi_athos; cd oi_athos;pwd
+ls

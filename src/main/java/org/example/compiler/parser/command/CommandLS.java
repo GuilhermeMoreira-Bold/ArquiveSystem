@@ -20,6 +20,7 @@ public class CommandLS extends CommandNode{
         for (Arquive arquive : arquives) {
             content.append(arquive.getName() + "\n");
         }
+
         return content.toString();
     }
 

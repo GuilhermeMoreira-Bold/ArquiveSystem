@@ -72,9 +72,10 @@ public class Entry {
 
         int starterBlock  = buffer.getInt();
         int parent = buffer.getInt();
-        int size = buffer.getInt();
         byte type = buffer.get();
         byte status = buffer.get();
+        int size = buffer.getInt();
+
 
 
         return new Entry(name,starterBlock,parent,size,type,status);

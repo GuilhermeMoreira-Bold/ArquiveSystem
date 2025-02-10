@@ -46,20 +46,17 @@ public class VirtualDisk {
             System.out.println("Data area starter point: " + DATA_AREA_OFFSET);
         }
     }
-
-   public void addArquive(Arquive arquive) throws IOException {
-    //TODO to add a arquive
+    public int addEntry(Entry entry) throws IOException {
+       entry.setStartBlock(fat.addFileCluster(entry));
+       dataArea.writeEntry(entry.getParent(),entry);
+       dataArea.writeEntry(entry.getStartBlock(),entry);
+       return entry.getStartBlock();
    }
 
-   public int addSubDir(int parentStaterBlock,Entry subDir) throws IOException {
-       subDir.setStartBlock(fat.addFileCluster(subDir));
+   public void editEntry(Entry entry){
 
-       dataArea.writeEntry(parentStaterBlock,subDir);
-       dataArea.writeEntry(subDir.getStartBlock(),subDir);
-       return subDir.getStartBlock();
    }
-
-   public void removeDir(Entry entry) throws IOException {
+   public void removeEntry(Entry entry) throws IOException {
         fat.removeFileCluster(entry);
 
         byte[] buffer = dataArea.readEntry(entry.getParent());

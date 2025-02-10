@@ -48,6 +48,7 @@ public class DataArea {
                         }
                     }
                     if (hasSpace) {
+
                         IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET  + ((long) cluster * CLUSTER) + i));
                         return;
                     }

@@ -4,7 +4,6 @@ import org.example.system.directories.Directory;
 import org.example.system.disk.Entry;
 import org.example.system.disk.VirtualDisk;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 import static org.example.system.disk.DiskUtils.*;
@@ -13,7 +12,7 @@ public class FileSystem {
     Directory root;
     Directory current;
     VirtualDisk disk;
-    private final boolean EXISTS = false;
+    private final boolean EXISTS = true;
     public Directory getCurrent() {
         return current;
     }
@@ -53,7 +52,6 @@ public class FileSystem {
         byte[] buffer = disk.readDir(index);
         int offset = ENTRY_SIZE;
 
-
         for (int i = 0; i < buffer.length; i++) {
             if(offset == 4096) break;
             byte actualByte = buffer[offset];
@@ -71,7 +69,7 @@ public class FileSystem {
                if(entry.getType() == 0){
                    dir.addSubdirectory(entry.getName(), new Directory(entry.getName(), dir, entry.getStatus(), entry.getStartBlock()));
                }else{
-                   dir.addData(new Arquive(entry.getName(),"",0));
+                   dir.addData(new Arquive(entry.getName(),"",entry.getSize(), entry.getStartBlock()));
                }
                offset += ENTRY_SIZE;
 

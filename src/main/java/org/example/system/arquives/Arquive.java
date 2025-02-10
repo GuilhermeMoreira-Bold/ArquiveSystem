@@ -4,6 +4,7 @@ public class Arquive {
     String name;
     String data;
     int blocksSize;
+    int staterBlock;
 
     public String getName() {
         return name;
@@ -17,9 +18,20 @@ public class Arquive {
         return blocksSize;
     }
 
-    public Arquive(String name, String data, int blocksSize) {
+    public int getStaterBlock() {
+        return staterBlock;
+    }
+
+    public void setStaterBlock(int staterBlock) {
+        this.staterBlock = staterBlock;
+    }
+
+    public Arquive(String name, String data, int blocksSize, int staterBlock) {
+        this.staterBlock = staterBlock;
         this.name = name;
         this.data = data;
         this.blocksSize = blocksSize;
     }
+
+
 }

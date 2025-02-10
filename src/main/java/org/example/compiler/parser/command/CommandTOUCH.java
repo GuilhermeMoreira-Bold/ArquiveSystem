@@ -2,7 +2,9 @@ package org.example.compiler.parser.command;
 
 import org.example.system.arquives.Arquive;
 import org.example.system.FileSystem;
+import org.example.system.disk.Entry;
 
+import java.io.IOException;
 import java.util.List;
 
 public class CommandTOUCH extends CommandNode{
@@ -16,13 +18,19 @@ public class CommandTOUCH extends CommandNode{
     public String execute(FileSystem context) {
         List<Arquive> arquives = context.getCurrent().getData();
         for (Arquive arquive : arquives) {
-            if(arquive.getName() == arquiveName){
+            if(arquive.getName().equals(arquiveName)){
                 return arquiveName + " already exists";
             }
         }
-        context.getCurrent().addData(new Arquive(arquiveName,"",arquiveName.length()));
-        return "success";
 
+        try {
+            int starterBlock =  context.getDisk().addEntry(new Entry(arquiveName, (byte) 1, 1, (byte) 1, context.getCurrent().getStaterBlock()));
+            context.getCurrent().addData(new Arquive(arquiveName,"",1, starterBlock));
+
+        }catch (IOException e){
+           throw new RuntimeException(e);}
+
+        return "success";
     }
 
     @Override
