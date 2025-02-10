@@ -51,10 +51,64 @@ public class VirtualDisk {
     //TODO to add a arquive
    }
 
-   public boolean addSubDir(int parentStaterBlock,Entry subDir) throws IOException {
+   public int addSubDir(int parentStaterBlock,Entry subDir) throws IOException {
        subDir.setStartBlock(fat.addFileCluster(subDir));
+
        dataArea.writeEntry(parentStaterBlock,subDir);
-       return true;
+       dataArea.writeEntry(subDir.getStartBlock(),subDir);
+       return subDir.getStartBlock();
+   }
+
+   public void removeDir(Entry entry) throws IOException {
+        fat.removeFileCluster(entry);
+
+        byte[] buffer = dataArea.readEntry(entry.getParent());
+        int offset = 0;
+
+       for (int i = 0; i < buffer.length; i+= ENTRY_SIZE) {
+           if(offset == 4096) break;
+           byte actualByte = buffer[offset];
+           if(actualByte == FREE_AREA){
+               offset += ENTRY_SIZE;
+           }else{
+               byte[] e = new byte[ENTRY_SIZE];
+               System.arraycopy(buffer, offset, e, 0, ENTRY_SIZE);
+               Entry ent = Entry.toEntry(e);
+               if(!ent.getName().equals(entry.getName())) {
+                   offset += ENTRY_SIZE;
+               }else{
+                   ent.setStatus((byte)0);
+
+                   int pointer = DATA_AREA_OFFSET + (CLUSTER * entry.getParent()) + offset;
+                   dataArea.writeEntryAt(pointer,ent);
+                   break;
+               }
+           }
+       }
+
+      buffer = dataArea.readEntry(entry.getStartBlock());
+       offset = 0;
+
+       for (int j = 0; j < buffer.length; j += ENTRY_SIZE) {
+           if(offset == 4096) break;
+           byte actualByte = buffer[offset];
+           if(actualByte == FREE_AREA){
+               offset += ENTRY_SIZE;
+           }else{
+               byte[] e = new byte[ENTRY_SIZE];
+               System.arraycopy(buffer, offset, e, 0, ENTRY_SIZE);
+               Entry ent = Entry.toEntry(e);
+               if(!ent.getName().equals(entry.getName())) {
+                   offset += ENTRY_SIZE;
+               }else{
+                   ent.setStatus((byte)0);
+                   int pointer = DATA_AREA_OFFSET + (CLUSTER * entry.getStartBlock()) + offset;
+
+                   dataArea.writeEntryAt(pointer,ent);
+                   break;
+               }
+           }
+       }
    }
 
    public byte[] readArquive(int starterBlock) throws IOException {

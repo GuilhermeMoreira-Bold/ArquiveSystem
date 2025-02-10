@@ -62,7 +62,7 @@ public class FileAllocationTable {
 
     public void removeFileCluster(Entry entryFile) {
         int current = entryFile.getStartBlock();
-        while ( current != EOF) {
+        while (current != EOF) {
             int next = fileClusters[current];
             fileClusters[current] =  FREE;
             current = next;

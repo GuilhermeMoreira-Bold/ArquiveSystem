@@ -15,6 +15,10 @@ public class Directory {
     byte status;
     int staterBlock;
 
+    public void setStaterBlock(int staterBlock) {
+        this.staterBlock = staterBlock;
+    }
+
     public Map<String, Directory> getChildrens() {
         return childrens;
     }
@@ -26,6 +30,14 @@ public class Directory {
         this.status = status;
         this.parent = parent;
         this.staterBlock = staterBlock;
+    }
+
+    public Directory(String name,Directory parent, byte status) {
+        this.name = name;
+        this.parent = parent;
+        this.status = status;
+        this.childrens = new HashMap<>();
+        this.data = new ArrayList<>();
     }
 
     public int getStaterBlock() {
@@ -71,6 +83,7 @@ public class Directory {
                     ", childrens=" + childrens +
                     ", parent=" + parent.getName() +
                     ", status=" + status +
+                    ", starter_block=" + staterBlock +
                     '}';
         }
         return "Directory{" +
@@ -78,6 +91,7 @@ public class Directory {
                 ", data=" + data +
                 ", childrens=" + childrens +
                 ", status=" + status +
+                ", starter_block=" + staterBlock +
                 '}';
     }
 

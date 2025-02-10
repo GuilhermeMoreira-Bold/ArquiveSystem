@@ -39,9 +39,21 @@ public class Entry {
         this.size = size;
         this.type = type;
         this.status = status;
-        this.startBlock = 200; // atualizar depois somente para teste
         this.parent = parent;
     }
+
+    public Entry(String name, int startBlock, int parent, int size, byte type, byte status) {
+        if(name.getBytes().length > NAME_SIZE) {
+            throw new IllegalArgumentException("too long");
+        }
+        this.name = name;
+        this.startBlock = startBlock;
+        this.parent = parent;
+        this.size = size;
+        this.type = type;
+        this.status = status;
+    }
+
     public byte getStatus() {
         return status;
     }
@@ -58,12 +70,14 @@ public class Entry {
 
         String name = new String(nameBytes).trim();
 
-        int startBlock  = buffer.getInt();
+        int starterBlock  = buffer.getInt();
         int parent = buffer.getInt();
         int size = buffer.getInt();
         byte type = buffer.get();
         byte status = buffer.get();
-        return new Entry(name, type, size, status, parent);
+
+
+        return new Entry(name,starterBlock,parent,size,type,status);
     }
     public byte[] toBytes() {
         ByteBuffer buffer = ByteBuffer.allocate(ENTRY_SIZE);

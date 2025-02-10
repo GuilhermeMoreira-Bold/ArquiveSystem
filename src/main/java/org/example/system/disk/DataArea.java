@@ -4,6 +4,7 @@ import org.example.system.disk.handlers.DataAreaHandler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 import static org.example.system.disk.DiskUtils.*;
 
@@ -35,7 +36,7 @@ public class DataArea {
     public void writeEntry(int cluster, Entry entry) throws IOException {
             byte[] clusterContent = IOHandler.readAt(cluster);
 
-            for (int i = 0; i < clusterContent.length; i++) {
+            for (int i = 0; i <= clusterContent.length; i+= ENTRY_SIZE) {
                 byte c = clusterContent[i];
                 if (c == FREE_AREA) {
                     boolean hasSpace = true;
@@ -47,6 +48,14 @@ public class DataArea {
                         }
                     }
                     if (hasSpace) {
+                        IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET  + ((long) cluster * CLUSTER) + i));
+                        return;
+                    }
+                }else{
+                    byte[] buffer = new byte[ENTRY_SIZE];
+                    System.arraycopy(clusterContent, i, buffer, 0, ENTRY_SIZE);
+                    Entry e = Entry.toEntry(buffer);
+                    if(e.getStatus() == 0){
                         IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET + ((long) cluster * CLUSTER) + i));
                         return;
                     }
@@ -54,6 +63,9 @@ public class DataArea {
             }
     }
 
+    public void writeEntryAt(int index, Entry entry) throws IOException {
+        IOHandler.writeAt(entry.toBytes(),index);
+    }
 
     public byte[] readAllDisk() throws IOException {
         return IOHandler.read();

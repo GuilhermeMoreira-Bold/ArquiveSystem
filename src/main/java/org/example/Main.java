@@ -18,12 +18,35 @@ public class Main {
 
         FileSystem fileSystem = new FileSystem();
 
-//        fileSystem.createDirectory(new Directory("Athos_teste", fileSystem.getCurrent(),(byte) 0,0));
-//        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 0,0));
-//        fileSystem.createDirectory(new Directory("Athos_teste_3", fileSystem.getCurrent(),(byte) 0,0));
-//        fileSystem.createDirectory(new Directory("Athos_teste_4", fileSystem.getCurrent(),(byte) 0,0));
-//        fileSystem.debugDataArea();
-        System.out.println(fileSystem);
+//        fileSystem.createDirectory(new Directory("Athos_teste", fileSystem.getCurrent(),(byte) 1));
+        fileSystem.debugDataArea(0);
+        fileSystem.debugDataArea(1);
+//        fileSystem.removeDirectory("Athos_teste");
 
+//        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 1));
+
+//        fileSystem.debugDataArea(0);
+//        fileSystem.debugDataArea(1);
+
+        //        fileSystem.moveDir("Athos_teste");
+
+//        fileSystem.createDirectory(new Directory("Athos_teste", fileSystem.getCurrent(),(byte) 1));
+
+//        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 0));
+//        fileSystem.createDirectory(new Directory("Athos_teste_3", fileSystem.getCurrent(),(byte) 0));
+//        fileSystem.createDirectory(new Directory("Athos_teste_4", fileSystem.getCurrent(),(byte) 0));
+
+//        fileSystem.debugDataArea(1);
+//        fileSystem.debugDataArea(2);
+
+//        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 0));
+//        fileSystem.debugDataArea(1);
+//        fileSystem.debugDataArea(0);
+
+//        fileSystem.removeDirectory("Athos_teste_2");
+//        fileSystem.removeDirectory("Athos_teste_3");
+//        fileSystem.removeDirectory("Athos_teste_4");
+
+        System.out.println(fileSystem.getCurrent());
     }
 }
