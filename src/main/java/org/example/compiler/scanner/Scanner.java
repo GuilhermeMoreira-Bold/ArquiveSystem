@@ -72,7 +72,7 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
             case '/':
             case '.':
                 if(advance() == '.'){
-
+                    //TODO
                 }
                 break;
             case ';':
@@ -95,7 +95,7 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
     }
 
     private void identifier() {
-        while(isAlphaNumeric(peek()) || peek() == '.') advance();
+        while(isAlphaNumeric(peek()) || peek() == '.' || peek() == '_') advance();
         String value = source.substring(start, current);
         TokenType type;
         type = TokenType.IDENTIFIER;

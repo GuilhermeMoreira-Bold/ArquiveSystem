@@ -13,7 +13,7 @@ public class FileSystem {
     Directory root;
     Directory current;
     VirtualDisk disk;
-    private final boolean EXISTS = true;
+    private final boolean EXISTS = false;
     public Directory getCurrent() {
         return current;
     }
@@ -38,47 +38,10 @@ public class FileSystem {
       }
     }
 
-    public void createDirectory(Directory dir) throws IOException {
-        if(getCurrent().getChildrens() != null) {
-            for (Map.Entry<String, Directory> dirs :
-                    getCurrent().getChildrens().entrySet()) {
-                if (dir.getName().equals(dirs.getKey())) {
-                    System.out.println(" already exists");
-                    return;
-                }
-            }
-        }
-
-       int starterBlock = disk.addSubDir(current.getStaterBlock(),new Entry(dir.getName(), (byte) 1, 1, (byte) 0,current.getStaterBlock()));
-       dir.setStaterBlock(starterBlock);
-       current.addSubdirectory(dir.getName(), dir);
-    }
-    public void removeDirectory(String name) throws IOException {
-        for(Map.Entry<String, Directory> dir : getCurrent().getChildrens().entrySet()) {
-            if(dir.getKey().equals(name)) {
-                Directory d = dir.getValue();
-                Entry entry = new Entry(d.getName(),d.getStaterBlock(),getCurrent().getStaterBlock(), 0,(byte)0,d.getStatus());
-                disk.removeDir(entry);
-                getCurrent().removeSubdirectory(dir.getValue());
-            }
-        }
+    public VirtualDisk getDisk() {
+        return disk;
     }
 
-    public void moveDir(String name){
-        boolean found = false;
-        for(Map.Entry<String, Directory> dirs : getCurrent().getChildrens().entrySet()){
-            if(name.equals(dirs.getKey())){
-                setCurrent(dirs.getValue());
-                found = true;
-                break;
-            }
-        }
-        if(!found){
-            System.out.println(" does not exist");
-        }
-    }
-
-    //subdir.getParent().getStaterBlock(), )
 
     private void loadRootDirs() throws IOException {
         for (Map.Entry<String, Directory> dir :

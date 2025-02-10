@@ -14,15 +14,13 @@ public class CommandCD  extends CommandNode{
 
     @Override
     public String execute(FileSystem context) {
-        boolean found = false;
         for(Map.Entry<String, Directory> dirs : context.getCurrent().getChildrens().entrySet()){
-            if(directoryName.equals(dirs.getKey()) && !found){
+            if(directoryName.equals(dirs.getKey())){
                 context.setCurrent(dirs.getValue());
-                found = true;
+                return "sucess";
             }
         }
-        if(!found)  return "No such directory: " + directoryName;
-        return "sucess";
+        return "No such directory: " + directoryName;
     }
 
     @Override

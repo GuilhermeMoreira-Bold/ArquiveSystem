@@ -11,10 +11,9 @@ public class CommandPWD  extends  CommandNode{
     public String execute(FileSystem context) {
         StringBuilder path = new StringBuilder();
         Directory d = context.getCurrent();
-        List<String> names = new ArrayList<>();
         while(true){
             if(d == null) break;
-            path.insert(0, "/" + d.getName());
+            path.insert(0, d.getName().equals("/") ? "" : "/" + d.getName());
             d = d.getParent();
         }
 
