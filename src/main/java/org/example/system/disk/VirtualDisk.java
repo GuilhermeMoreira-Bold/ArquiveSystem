@@ -63,7 +63,7 @@ public class VirtualDisk {
         int offset = 0;
 
        for (int i = 0; i < buffer.length; i+= ENTRY_SIZE) {
-           if(offset == 4096) break;
+           if(offset == CLUSTER) break;
            byte actualByte = buffer[offset];
            if(actualByte == FREE_AREA){
                offset += ENTRY_SIZE;
@@ -87,7 +87,7 @@ public class VirtualDisk {
        offset = 0;
 
        for (int j = 0; j < buffer.length; j += ENTRY_SIZE) {
-           if(offset == 4096) break;
+           if(offset == CLUSTER) break;
            byte actualByte = buffer[offset];
            if(actualByte == FREE_AREA){
                offset += ENTRY_SIZE;

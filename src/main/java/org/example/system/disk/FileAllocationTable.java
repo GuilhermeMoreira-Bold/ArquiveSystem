@@ -36,7 +36,7 @@ public class FileAllocationTable {
         return clusters;
     }
 
-    public int addFileCluster(Entry entryFile) {
+    public int addFileCluster(Entry entryFile) throws IOException {
         ArrayList<Integer> clusters = new ArrayList<>();
 
        for(int i = 0; i < entryFile.getSize(); i ++) {
@@ -49,6 +49,7 @@ public class FileAllocationTable {
             }
        }
        fileClusters[clusters.get(clusters.size() -1)] =  EOF;
+       writeAllDataToDisk();
        return clusters.get(0);
     }
     public int findFreeBlock() {
@@ -60,13 +61,14 @@ public class FileAllocationTable {
         throw new IllegalStateException("No free block found");
     }
 
-    public void removeFileCluster(Entry entryFile) {
+    public void removeFileCluster(Entry entryFile) throws IOException {
         int current = entryFile.getStartBlock();
         while (current != EOF) {
             int next = fileClusters[current];
             fileClusters[current] =  FREE;
             current = next;
         }
+        writeAllDataToDisk();
     }
 
     public void writeAllDataToDisk() throws IOException {

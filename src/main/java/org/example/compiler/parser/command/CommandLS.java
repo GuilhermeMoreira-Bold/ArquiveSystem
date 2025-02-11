@@ -21,6 +21,12 @@ public class CommandLS extends CommandNode{
             content.append(arquive.getName() + "\n");
         }
 
+//        try {
+//             context.debugDataArea(1);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return "";
         return content.toString();
     }
 

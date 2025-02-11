@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws UnexpectInputType, IOException {
         CompilationPipeline pipilene = new CompilationPipeline();
-        CMD cmd = new CMD("/home/guilherme/IdeaProjects/ARQUIVES_SO/src/main/resources/cmd.test");
+        CMD cmd = new CMD("src/main/resources/cmd.test");
         FileSystem fl = new FileSystem();
         pipilene.insertStage(new Scanner()).insertStage(new Parser()).insertStage(new CommandExecutor(fl));
 

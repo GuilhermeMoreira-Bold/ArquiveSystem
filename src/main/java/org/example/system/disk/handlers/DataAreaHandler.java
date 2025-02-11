@@ -70,7 +70,7 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
 
     private void createDataArea() throws IOException {
         raf.seek(DATA_AREA_OFFSET);
-        byte[] emptyData = new byte[TOTAL_BLOCKS];
+        byte[] emptyData = new byte[DISK_SIZE];
         Arrays.fill(emptyData, FREE_AREA);
         raf.write(emptyData);
     }

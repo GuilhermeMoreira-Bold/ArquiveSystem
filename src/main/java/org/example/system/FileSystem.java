@@ -23,15 +23,15 @@ public class FileSystem {
 
     public FileSystem() throws IOException {
         disk = new VirtualDisk(EXISTS, "test.bin");
-        initialize(EXISTS);
+        initialize();
     }
 
-    private void initialize(boolean exists) throws IOException {
+    private void initialize() throws IOException {
       byte[] buffer =  disk.readDir(0);
       Entry rootEntry = Entry.toEntry(buffer);
       root = new Directory(rootEntry.getName(), null, rootEntry.getStatus(),rootEntry.getStartBlock());
       current = root;
-      if (exists) {
+      if (EXISTS) {
           addDataToDir(0,root);
           loadRootDirs();
       }
@@ -59,11 +59,12 @@ public class FileSystem {
                 offset++;
             }else{
                byte[] e = new byte[ENTRY_SIZE];
-               System.arraycopy(buffer, offset, e, 0, 269);
+               System.arraycopy(buffer, offset, e, 0, ENTRY_SIZE);
                Entry entry = Entry.toEntry(e);
 
                if(entry.getStatus() == 0){
                    offset += ENTRY_SIZE;
+                   continue;
                }
 
                if(entry.getType() == 0){

@@ -2,6 +2,8 @@ package org.example.system.disk.handlers;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
+
 import static org.example.system.disk.DiskUtils.*;
 import static org.example.system.disk.DiskUtils.FREE_AREA;
 
@@ -60,8 +62,6 @@ public class FatHandler implements DiskIOHandler<int[]>,AutoCloseable {
             for(int i = 0; i < FAT_SIZE -1; i ++){
                 raf.writeInt(-1);
             }
-
-
     }
     private int[] getFat() throws IOException {
             raf.seek(FAT_INITIAL_OFFSET);
