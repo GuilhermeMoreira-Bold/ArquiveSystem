@@ -76,8 +76,6 @@ public class Entry {
         byte status = buffer.get();
         int size = buffer.getInt();
 
-
-
         return new Entry(name,starterBlock,parent,size,type,status);
     }
     public byte[] toBytes() {

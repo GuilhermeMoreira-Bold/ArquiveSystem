@@ -6,8 +6,6 @@ import org.example.compiler.pipeline.execptions.UnexpectInputType;
 import org.example.compiler.scanner.Scanner;
 import org.example.compiler.util.CMD;
 import org.example.system.FileSystem;
-import org.example.system.directories.Directory;
-
 import java.io.IOException;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -20,38 +18,5 @@ public class Main {
         pipilene.insertStage(new Scanner()).insertStage(new Parser()).insertStage(new CommandExecutor(fl));
 
         pipilene.execute(cmd);
-
-//        FileSystem fileSystem = new FileSystem();
-//
-////        fileSystem.createDirectory(new Directory("Athos_teste", fileSystem.getCurrent(),(byte) 1));
-//        fileSystem.debugDataArea(0);
-//        fileSystem.debugDataArea(1);
-////        fileSystem.removeDirectory("Athos_teste");
-//
-////        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 1));
-//
-////        fileSystem.debugDataArea(0);
-////        fileSystem.debugDataArea(1);
-//
-//        //        fileSystem.moveDir("Athos_teste");
-//
-////        fileSystem.createDirectory(new Directory("Athos_teste", fileSystem.getCurrent(),(byte) 1));
-//
-////        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 0));
-////        fileSystem.createDirectory(new Directory("Athos_teste_3", fileSystem.getCurrent(),(byte) 0));
-////        fileSystem.createDirectory(new Directory("Athos_teste_4", fileSystem.getCurrent(),(byte) 0));
-//
-////        fileSystem.debugDataArea(1);
-////        fileSystem.debugDataArea(2);
-//
-////        fileSystem.createDirectory(new Directory("Athos_teste_2", fileSystem.getCurrent(),(byte) 0));
-////        fileSystem.debugDataArea(1);
-////        fileSystem.debugDataArea(0);
-//
-////        fileSystem.removeDirectory("Athos_teste_2");
-////        fileSystem.removeDirectory("Athos_teste_3");
-////        fileSystem.removeDirectory("Athos_teste_4");
-//
-//        System.out.println(fileSystem.getCurrent());
     }
 }

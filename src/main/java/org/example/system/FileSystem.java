@@ -22,7 +22,7 @@ public class FileSystem {
     }
 
     public FileSystem() throws IOException {
-        disk = new VirtualDisk(EXISTS, "test.bin");
+        disk = new VirtualDisk(EXISTS, DISK_NAME);
         initialize();
     }
 

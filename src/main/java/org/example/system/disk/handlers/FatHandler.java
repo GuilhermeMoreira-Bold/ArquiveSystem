@@ -43,8 +43,6 @@ public class FatHandler implements DiskIOHandler<int[]>,AutoCloseable {
             }
             raf.seek( (index * 4L) + FAT_INITIAL_OFFSET );
             raf.writeInt(value[0]);
-
-
     }
 
     @Override

@@ -12,7 +12,5 @@ public class DiskUtils {
 
     public static final int ROOT_DIRECTORY_TABLE_OFFSET = DATA_AREA_OFFSET;
     public static final int ENTRY_SIZE = 269;
-
-
     public static final byte FREE_AREA = (byte) 0XFF;
 }
