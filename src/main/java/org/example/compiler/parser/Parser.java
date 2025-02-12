@@ -6,6 +6,7 @@ import org.example.compiler.parser.command.*;
 
 import org.example.compiler.pipeline.pass.CompilationPass;
 import org.example.compiler.scanner.ScannedData;
+import org.example.gui.CommandCatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,37 +33,45 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
 
     @Override
     public ParsedData pass(ScannedData input) {
+        current = 0;
         tokens = input.getTokens();
         commands = new ArrayList<>();
+
+        if (tokens.isEmpty()) {
+            throw new RuntimeException("No tokens found");
+        }
+
         commands.add(command());
-        while(!isAtEnd() && check(TokenType.SEMICOLON) ) {
+
+        while (!isAtEnd() && check(TokenType.SEMICOLON)) {
             consume(TokenType.SEMICOLON, "Unexpected command");
             commands.add(command());
-
         }
         return new ParsedData(commands);
     }
 
-    private CommandNode command(){
+    private CommandNode command() {
 
-       if(match(TokenType.CD)){
+        if (match(TokenType.CD)) {
             return commandCD();
-       }
-       if(match(TokenType.MKDIR)){
-           return commandMKDIR();
-       }
-       if(match(TokenType.TOUCH)){
-           return commandTouch();
-       }
-       if(match(TokenType.LS)){
-        return new CommandLS();
-       }
-       if(match(TokenType.PWD)){
-         return new CommandPWD();
-       }
-       if(match(TokenType.RMDIR)){
-           return commandRMDIR();
-       }
+        }
+        if (match(TokenType.MKDIR)) {
+            return commandMKDIR();
+        }
+        if (match(TokenType.TOUCH)) {
+            return commandTouch();
+        }
+        if (match(TokenType.LS)) {
+            return new CommandLS();
+        }
+        if (match(TokenType.PWD)) {
+            return new CommandPWD();
+        }
+        if (match(TokenType.RMDIR)) {
+            return commandRMDIR();
+        }
+
+        CommandCatcher.getInstance().getResults().add("\nUnexpected token: " + peek().lexeme);
         throw new RuntimeException("Unexpected token: " + peek().lexeme);
     }
 
@@ -81,9 +90,8 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
         return new CommandTOUCH(directory);
     }
 
-    private CommandCD commandCD(){
-        if(!check(TokenType.IDENTIFIER))
-        {
+    private CommandCD commandCD() {
+        if (!check(TokenType.IDENTIFIER, TokenType.TWODOTS)) {
             throw new RuntimeException("Not a valid directory name " + peek().lexeme + ", or missing one");
         }
         String directory = peek().lexeme;
@@ -91,41 +99,51 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
         return new CommandCD(directory);
     }
 
-    private CommandMKDIR commandMKDIR(){
+    private CommandMKDIR commandMKDIR() {
         check(TokenType.IDENTIFIER);
         String directory = peek().lexeme;
         advance();
         return new CommandMKDIR(directory);
     }
-    private Token peek(){
+
+    private Token peek() {
+        if (current >= tokens.size()) {
+            throw new RuntimeException("Attempted to access an invalid index. Available tokens: " + tokens.size());
+        }
 
         return tokens.get(current);
     }
 
-    private boolean match(TokenType... types){
-        if(check(types)){
+    private boolean match(TokenType... types) {
+        if (check(types)) {
             advance();
             return true;
         }
         return false;
     }
-    private void advance(){
-        current++;
+
+    private void advance() {
+        if (current < tokens.size() - 1) {
+            current++;
+        }
     }
-    private void consume(TokenType type, String message){
-        if(!match(type)){
+
+    private void consume(TokenType type, String message) {
+        if (!match(type)) {
             throw new RuntimeException("Unexpected token type: " + message);
         }
     }
-    private boolean check(TokenType... types){
-        for(TokenType type : types){
-            if(peek().type() == type){
+
+    private boolean check(TokenType... types) {
+        for (TokenType type : types) {
+            if (peek().type() == type) {
                 return true;
             }
         }
         return false;
     }
-    private boolean isAtEnd(){
-        return peek().type() == TokenType.EOF;
+
+    private boolean isAtEnd() {
+        return current >= tokens.size() || peek().type() == TokenType.EOF;
     }
 }

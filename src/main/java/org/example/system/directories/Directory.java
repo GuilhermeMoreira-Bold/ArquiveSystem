@@ -95,5 +95,16 @@ public class Directory {
                 '}';
     }
 
+    public String getPath() {
+        StringBuilder path = new StringBuilder();
+        Directory d = this;
 
+        while(true){
+            if(d == null) break;
+            path.insert(0, d.getName().equals("/") ? "" : "/" + d.getName());
+            d = d.getParent();
+        }
+
+        return path.toString();
+    }
 }

@@ -3,6 +3,8 @@ import org.example.system.arquives.Arquive;
 import org.example.system.directories.Directory;
 import org.example.system.disk.Entry;
 import org.example.system.disk.VirtualDisk;
+
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.IOException;
 import java.util.Map;
 
@@ -78,6 +80,59 @@ public class FileSystem {
         }
     }
 
+    public DefaultMutableTreeNode getFileSystemTree() {
+        return buildTree(root);
+    }
+
+    private FileSystemTreeNode buildTree(Directory directory) {
+        FileSystemTreeNode node = new FileSystemTreeNode(directory.getName(), true);
+
+        for (Directory subDir : directory.getChildrens().values()) {
+            node.add(buildTree(subDir));
+        }
+
+        for (Arquive file : directory.getData()) {
+            node.add(new FileSystemTreeNode(file.getName(), false));
+        }
+
+        return node;
+    }
+
+    public static class FileSystemTreeNode extends DefaultMutableTreeNode {
+        private final boolean isDirectory;
+
+        public FileSystemTreeNode(String name, boolean isDirectory) {
+            super(name);
+            this.isDirectory = isDirectory;
+        }
+
+        public boolean isDirectory() {
+            return isDirectory;
+        }
+    }
+
+    public void createFile(Directory parent, String fileName) {
+        if (parent.getData().stream().anyMatch(f -> f.getName().equals(fileName))) {
+            System.out.println("File already exists: " + fileName);
+            return;
+        }
+
+        Arquive newFile = new Arquive(fileName, "", 0, 0);
+        parent.addData(newFile);
+        System.out.println("File created: " + fileName);
+    }
+
+    public void createDirectory(Directory parent, String dirName) {
+        if (parent.getChildrens().containsKey(dirName)) {
+            System.out.println("Directory already exists: " + dirName);
+            return;
+        }
+
+        Directory newDir = new Directory(dirName, parent, (byte) 1, 0);
+        parent.addSubdirectory(dirName, newDir);
+        System.out.println("Directory created: " + dirName);
+    }
+
     public void debugDataArea(int index) throws IOException {
         System.out.println(new String(disk.readDir(index)));
 //
@@ -91,5 +146,13 @@ public class FileSystem {
                 "root=" + root +
 //                ", current=" + current +
                 '}';
+    }
+
+    public Directory getRoot() {
+        return root;
+    }
+
+    public boolean isInRoot() {
+        return current == root;
     }
 }

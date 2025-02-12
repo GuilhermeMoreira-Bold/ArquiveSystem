@@ -55,6 +55,8 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
             scanTOken();
         }
         makeToken(TokenType.EOF, null, null);
+
+        System.out.println(tokens);
     }
     private void syncCursos() {
         start = current;
@@ -72,7 +74,7 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
             case '/':
             case '.':
                 if(advance() == '.'){
-                    //TODO
+                    makeToken(TokenType.TWODOTS);
                 }
                 break;
             case ';':
@@ -157,6 +159,11 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
         start = 0;
         current = 0;
         source = file.getSource();
-        tokens = new ArrayList<>();
+
+        if(tokens == null){
+            tokens = new ArrayList<>();
+        } else {
+            tokens.clear();
+        }
     }
 }

@@ -56,6 +56,7 @@ public class VirtualDisk {
    public void editEntry(Entry entry){
 
    }
+
    public void removeEntry(Entry entry) throws IOException {
         fat.removeFileCluster(entry);
 

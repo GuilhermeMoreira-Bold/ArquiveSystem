@@ -8,9 +8,19 @@ import java.io.IOException;
 
 public class CMD  extends IOComponent<CMD> {
     private  String source;
-    public CMD(String path) {
-        source = getFileContent(path);
+
+    public CMD(String path, boolean isFile) {
+        if(isFile) {
+            source = getFileContent(path);
+        } else {
+            source = path;
+        }
     }
+
+    public CMD(String command) {
+        this.source = command;
+    }
+
     private String getFileContent(String path) {
         StringBuilder builder = new StringBuilder();
 

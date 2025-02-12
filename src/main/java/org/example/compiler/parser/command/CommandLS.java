@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CommandLS extends CommandNode{
+
     @Override
     public String execute(FileSystem context) {
         StringBuilder content = new StringBuilder();
@@ -27,11 +28,11 @@ public class CommandLS extends CommandNode{
 //            e.printStackTrace();
 //        }
 //        return "";
-        return content.toString();
+        return "\n" + content;
     }
 
     @Override
     public String toString() {
-        return "CommandLS{}";
+        return "ls";
     }
 }

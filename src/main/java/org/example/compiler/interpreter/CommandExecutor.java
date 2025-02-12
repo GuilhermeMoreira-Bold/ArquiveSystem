@@ -36,7 +36,9 @@ public class CommandExecutor extends CompilationPass<ParsedData,CommandResult> {
        commands = input.commands;
 
        for (CommandNode command : commands) {
-            results.add(command.execute(fileSystem));
+           String currentPath = fileSystem.isInRoot() ? "/" : fileSystem.getCurrent().getPath();
+
+            results.add(currentPath + ": " + command.execute(fileSystem));
        }
        for (String result : results) {
            System.out.println(result);

@@ -14,10 +14,20 @@ public class CommandCD  extends CommandNode{
 
     @Override
     public String execute(FileSystem context) {
+        if(directoryName.equals("..")) {
+            if(context.isInRoot()) {
+                return "Already in root directory";
+            } else {
+                context.setCurrent(context.getCurrent().getParent());
+                return toString();
+            }
+
+        }
+
         for(Map.Entry<String, Directory> dirs : context.getCurrent().getChildrens().entrySet()){
             if(directoryName.equals(dirs.getKey())){
                 context.setCurrent(dirs.getValue());
-                return "sucess";
+                return toString();
             }
         }
         return "No such directory: " + directoryName;
@@ -25,8 +35,6 @@ public class CommandCD  extends CommandNode{
 
     @Override
     public String toString() {
-        return "CommandCD{" +
-                "directoryName='" + directoryName + '\'' +
-                '}';
+        return String.format("cd %s", directoryName);
     }
 }
