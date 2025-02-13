@@ -59,7 +59,7 @@ public class FileSystem {
 
             byte actualByte = buffer[offset];
             if (actualByte == FREE_AREA) {
-                offset++;
+                offset+= ENTRY_SIZE;
                 continue;
             }
 
@@ -95,8 +95,18 @@ public class FileSystem {
                         data,
                         entry.getSize(),
                         entry.getStartBlock());
+                if(dir.getData().isEmpty()){
+                    dir.addData(arquivo);
+                }
 
-                dir.addData(arquivo);
+                for(Arquive a : dir.getData()){
+                    if(a.getName().equals(arquivo.getName())){
+
+                    }else{
+                        dir.addData(arquivo);
+                        return;
+                    }
+                }
             }
 
             offset += ENTRY_SIZE;

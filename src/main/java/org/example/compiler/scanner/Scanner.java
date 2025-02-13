@@ -17,9 +17,8 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
     private static Map<String, TokenType> keyWords = new HashMap<String, TokenType>() {};
     public Scanner(){
         keyWords.put("mkdir", TokenType.MKDIR);
-        keyWords.put("rmdir", TokenType.RMDIR);
-        keyWords.put("touch", TokenType.TOUCH);
         keyWords.put("rm", TokenType.RM);
+        keyWords.put("touch", TokenType.TOUCH);
         keyWords.put("ls", TokenType.LS);
         keyWords.put("pwd", TokenType.PWD);
         keyWords.put("cd", TokenType.CD);

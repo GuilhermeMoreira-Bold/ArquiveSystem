@@ -37,66 +37,27 @@ public class FileSystemGUI extends JFrame {
                 .insertStage(new CommandExecutor(fileSystem))
                 .insertStage(new CommandCatcherStage());
 
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         initUI();
     }
 
     private void initUI() {
 
-        setTitle("File System Manager");
-        setSize(800, 600);
+        setTitle("Arquive System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         fileTree = new JTree(fileSystem.getFileSystemTree());
         fileTree.setCellRenderer(new FileSystemTreeRenderer());
+        fileTree.setShowsRootHandles(true);
         JScrollPane treeScroll = new JScrollPane(fileTree);
-        treeScroll.setPreferredSize(new Dimension(200, 600));
-        add(treeScroll, BorderLayout.WEST);
 
-//        JPopupMenu popupMenu = new JPopupMenu();
-//
-//        JMenuItem newFileMenuItem = new JMenuItem("New File");
-//        JMenuItem newFolderMenuItem = new JMenuItem("New Folder");
-//
-//        newFileMenuItem.addActionListener(e -> {
-//            TreePath selectedPath = fileTree.getSelectionPath();
-//            if (selectedPath == null) return;
-//
-//            FileSystem.FileSystemTreeNode selectedNode = (FileSystem.FileSystemTreeNode) selectedPath.getLastPathComponent();
-//            if (!selectedNode.isDirectory()) return;
-//
-//            String fileName = JOptionPane.showInputDialog("Nome do novo arquivo:");
-//            if (fileName == null || fileName.trim().isEmpty()) return;
-//
-//            Directory selectedDirectory = findDirectoryByPath(selectedPath);
-//            if (selectedDirectory != null) {
-//                fileSystem.createFile(selectedDirectory, fileName);
-//                updateFileTree();
-//            }
-//        });
-//
-//        newFolderMenuItem.addActionListener(e -> {
-//            TreePath selectedPath = fileTree.getSelectionPath();
-//            if (selectedPath == null) return;
-//
-//            FileSystem.FileSystemTreeNode selectedNode = (FileSystem.FileSystemTreeNode) selectedPath.getLastPathComponent();
-//            if (!selectedNode.isDirectory()) return;
-//
-//            String dirName = JOptionPane.showInputDialog("Nome da nova pasta:");
-//            if (dirName == null || dirName.trim().isEmpty()) return;
-//
-//            Directory selectedDirectory = findDirectoryByPath(selectedPath);
-//            if (selectedDirectory != null) {
-//                fileSystem.createDirectory(selectedDirectory, dirName);
-//                updateFileTree();
-//            }
-//        });
-//
-//        popupMenu.add(newFileMenuItem);
-//        popupMenu.add(newFolderMenuItem);
-
-        JPanel mainPanel = new JPanel(new BorderLayout());
-
+        JPanel terminalPanel = new JPanel(new BorderLayout());
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         JScrollPane outputScroll = new JScrollPane(outputArea);
@@ -105,28 +66,30 @@ public class FileSystemGUI extends JFrame {
         commandInput = new JTextField();
         commandInput.addActionListener(new FileSystemGUI.ExecuteCommandListener());
         JButton executeButton = new JButton("Enter");
+        executeButton.addActionListener(new ExecuteCommandListener());
 
         commandPanel.add(commandInput, BorderLayout.CENTER);
         commandPanel.add(executeButton, BorderLayout.EAST);
 
-        mainPanel.add(outputScroll, BorderLayout.CENTER);
-        mainPanel.add(commandPanel, BorderLayout.SOUTH);
+        terminalPanel.add(outputScroll, BorderLayout.CENTER);
+        terminalPanel.add(commandPanel, BorderLayout.SOUTH);
 
-        add(mainPanel, BorderLayout.CENTER);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, terminalPanel);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setDividerLocation(220);
 
-        executeButton.addActionListener(new ExecuteCommandListener());
-//        fileTree.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                if (SwingUtilities.isRightMouseButton(e)) {
-//                    int row = fileTree.getRowForLocation(e.getX(), e.getY());
-//                    if (row != -1) {
-//                        fileTree.setSelectionRow(row);
-//                        popupMenu.show(fileTree, e.getX(), e.getY());
-//                    }
-//                }
-//            }
-//        });
+        outputArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        commandPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        outputArea.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        commandInput.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+        add(splitPane, BorderLayout.CENTER);
+
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
+        setVisible(true);
+
         SwingUtilities.invokeLater(() -> commandInput.requestFocusInWindow());
     }
 

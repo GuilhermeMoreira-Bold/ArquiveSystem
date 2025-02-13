@@ -67,7 +67,7 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
         if (match(TokenType.PWD)) {
             return new CommandPWD();
         }
-        if (match(TokenType.RMDIR)) {
+        if (match(TokenType.RM)) {
             return commandRMDIR();
         }
         if(match(TokenType.NANO)) {
@@ -82,7 +82,7 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
         check(TokenType.IDENTIFIER);
         String name = peek().lexeme;
         advance();
-        return new CommandRMDIR(name);
+        return new CommandRM(name);
     }
 
     private CommandNode commandTouch() {

@@ -14,6 +14,7 @@ public class Directory {
     Directory parent;
     byte status;
     int staterBlock;
+    int size = 0;
 
     public void setStaterBlock(int staterBlock) {
         this.staterBlock = staterBlock;
@@ -40,6 +41,10 @@ public class Directory {
         this.data = new ArrayList<>();
     }
 
+    public int getSize() {
+        return size;
+    }
+
     public int getStaterBlock() {
         return staterBlock;
     }
@@ -49,16 +54,20 @@ public class Directory {
     }
 
     public void addData(Arquive arquive) {
+        size ++;
         data.add(arquive);
     }
     public void removeData(Arquive arquive) {
+        size --;
         data.remove(arquive);
     }
 
     public void addSubdirectory(String name,Directory subdirectory) {
+        size ++;
         childrens.put(name,subdirectory);
     }
     public void removeSubdirectory(Directory subdirectory) {
+        size --;
         childrens.remove(subdirectory.name);
     }
 
