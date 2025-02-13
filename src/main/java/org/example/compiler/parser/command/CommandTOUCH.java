@@ -28,7 +28,7 @@ public class CommandTOUCH extends CommandNode{
             context.getCurrent().addData(new Arquive(arquiveName,"",1, starterBlock));
 
         }catch (IOException e){
-           throw new RuntimeException(e);}
+            throw new RuntimeException(e);}
 
         return "success";
     }
