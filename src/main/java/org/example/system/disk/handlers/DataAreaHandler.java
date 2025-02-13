@@ -1,7 +1,5 @@
 package org.example.system.disk.handlers;
 
-import org.example.system.disk.Entry;
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
@@ -36,8 +34,8 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
         if (index < 0 || index >= TOTAL_BLOCKS) {
             throw new IndexOutOfBoundsException("Index " + index + " out of bounds for data area size " + TOTAL_BLOCKS);
         }
-        raf.seek((long) index * CLUSTER + DATA_AREA_OFFSET);
-        byte[] content = new byte[CLUSTER];
+        raf.seek((long) index * CLUSTER_SIZE + DATA_AREA_OFFSET);
+        byte[] content = new byte[CLUSTER_SIZE];
         raf.readFully(content);
         return content;
     }
@@ -73,5 +71,15 @@ public class DataAreaHandler implements DiskIOHandler<byte[]>, AutoCloseable {
         byte[] emptyData = new byte[DISK_SIZE];
         Arrays.fill(emptyData, FREE_AREA);
         raf.write(emptyData);
+    }
+
+    public byte[] readDataAt(int index) throws IOException {
+        if (index < 0 || index >= DISK_SIZE) {
+
+        }
+        raf.seek((long) index);
+        byte[] content = new byte[CLUSTER_DATA_AREA_SIZE];
+        raf.readFully(content);
+        return content;
     }
 }

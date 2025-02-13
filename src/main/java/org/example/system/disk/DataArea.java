@@ -4,7 +4,6 @@ import org.example.system.disk.handlers.DataAreaHandler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 import static org.example.system.disk.DiskUtils.*;
 
@@ -48,7 +47,7 @@ public class DataArea {
                         }
                     }
                     if (hasSpace) {
-                        IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET  + ((long) cluster * CLUSTER) + i));
+                        IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET  + ((long) cluster * CLUSTER_SIZE) + i));
                         return;
                     }
                 }else{
@@ -56,7 +55,7 @@ public class DataArea {
                     System.arraycopy(clusterContent, i, buffer, 0, ENTRY_SIZE);
                     Entry e = Entry.toEntry(buffer);
                     if(e.getStatus() == 0){
-                        IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET + ((long) cluster * CLUSTER) + i));
+                        IOHandler.writeAt(entry.toBytes(), (int) (DATA_AREA_OFFSET + ((long) cluster * CLUSTER_SIZE) + i));
                         return;
                     }
                 }
@@ -65,6 +64,10 @@ public class DataArea {
 
     public void writeEntryAt(int index, Entry entry) throws IOException {
         IOHandler.writeAt(entry.toBytes(),index);
+    }
+
+    public void writeContentAt(int index, byte[] content) throws IOException {
+        IOHandler.writeAt(content,index);
     }
 
     public byte[] readAllDisk() throws IOException {
@@ -77,4 +80,10 @@ public class DataArea {
     public byte[] readEntryAt(int clusterId) throws IOException {
         return IOHandler.readAt(clusterId);
     }
+
+    public byte[] readContentAt(int clusterId) throws IOException {
+        return IOHandler.readDataAt(clusterId);
+    }
+
+
 }

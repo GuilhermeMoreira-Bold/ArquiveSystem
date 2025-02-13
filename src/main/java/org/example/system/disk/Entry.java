@@ -97,6 +97,10 @@ public class Entry {
         return buffer.array();
     }
 
+    public void setSize(int size) {
+        this.size = size;
+    }
+
     public byte getType() {
         return type;
     }

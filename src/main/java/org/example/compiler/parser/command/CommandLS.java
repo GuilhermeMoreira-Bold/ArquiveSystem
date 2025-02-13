@@ -21,9 +21,9 @@ public class CommandLS extends CommandNode{
         for (Arquive arquive : arquives) {
             content.append(arquive.getName() + "\n");
         }
-
+//
 //        try {
-//             context.debugDataArea(1);
+//           return  context.debugDataArea(1);
 //        }catch (Exception e){
 //            e.printStackTrace();
 //        }
