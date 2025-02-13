@@ -14,7 +14,7 @@ public class FileSystem {
     Directory root;
     Directory current;
     VirtualDisk disk;
-    private final boolean EXISTS = true;
+    private final boolean MAINTAIN_DATA = true;
     public Directory getCurrent() {
         return current;
     }
@@ -24,7 +24,7 @@ public class FileSystem {
     }
 
     public FileSystem() throws IOException {
-        disk = new VirtualDisk(EXISTS, DISK_NAME);
+        disk = new VirtualDisk(MAINTAIN_DATA, DISK_NAME);
         initialize();
     }
 
@@ -33,7 +33,7 @@ public class FileSystem {
       Entry rootEntry = Entry.toEntry(buffer);
       root = new Directory(rootEntry.getName(), null, rootEntry.getStatus(),rootEntry.getStartBlock());
       current = root;
-      if (EXISTS) {
+      if (MAINTAIN_DATA) {
           addDataToDir(0,root);
           loadRootDirs();
       }
@@ -50,33 +50,67 @@ public class FileSystem {
             addDataToDir(dir.getValue().getStaterBlock(),dir.getValue());
         }
     }
-    private void addDataToDir(int index,Directory dir) throws IOException {
+    private void addDataToDir(int index, Directory dir) throws IOException {
+        // Lê os bytes do disco relativos a este diretório
         byte[] buffer = disk.readDir(index);
-        int offset = ENTRY_SIZE;
 
-        for (int i = 0; i < buffer.length; i++) {
-            if(offset == 4096) break;
+        // Percorre o buffer, lendo as entradas
+        int offset = ENTRY_SIZE; // supondo que haja algum cabeçalho de ENTRY_SIZE no início
+        while (offset < buffer.length) {
+            if (offset == 4096) break;  // limite do bloco, por exemplo
+
             byte actualByte = buffer[offset];
-            if(actualByte == FREE_AREA){
+            if (actualByte == FREE_AREA) {
                 offset++;
-            }else{
-               byte[] e = new byte[ENTRY_SIZE];
-               System.arraycopy(buffer, offset, e, 0, ENTRY_SIZE);
-               Entry entry = Entry.toEntry(e);
-
-               if(entry.getStatus() == 0){
-                   offset += ENTRY_SIZE;
-                   continue;
-               }
-
-               if(entry.getType() == 0){
-                   dir.addSubdirectory(entry.getName(), new Directory(entry.getName(), dir, entry.getStatus(), entry.getStartBlock()));
-               }else{
-                   dir.addData(new Arquive(entry.getName(),"",entry.getSize(), entry.getStartBlock()));
-               }
-               offset += ENTRY_SIZE;
-
+                continue;
             }
+
+            // Copia os bytes que compõem a entry
+            byte[] e = new byte[ENTRY_SIZE];
+            System.arraycopy(buffer, offset, e, 0, ENTRY_SIZE);
+            Entry entry = Entry.toEntry(e);
+
+            // Verifica o status para ignorar entradas inválidas
+            if (entry.getStatus() == 0) {
+                offset += ENTRY_SIZE;
+                continue;
+            }
+
+            // Verifica se é diretório ou arquivo
+            if (entry.getType() == 0) {
+                // É um diretório
+                Directory subDir = new Directory(
+                        entry.getName(),
+                        dir,
+                        entry.getStatus(),
+                        entry.getStartBlock()
+                );
+
+                // Adiciona o subdiretório ao diretório atual
+                dir.addSubdirectory(entry.getName(), subDir);
+
+                // Chama recursivamente para carregar o conteúdo do subdiretório
+                addDataToDir(subDir.getStaterBlock(), subDir);
+
+            } else {
+                // É um arquivo
+                String data = new String(disk.readEntryData(entry).getBytes());
+                int freeAreaPos = data.indexOf(FREE_AREA);
+                if (freeAreaPos != -1) {
+                    // Se encontrar FREE_AREA no meio, trunca a string
+                    data = data.substring(0, freeAreaPos);
+                }
+
+                Arquive arquivo = new Arquive(entry.getName(),
+                        data,
+                        entry.getSize(),
+                        entry.getStartBlock());
+
+                // Adiciona o arquivo ao diretório atual
+                dir.addData(arquivo);
+            }
+
+            offset += ENTRY_SIZE;
         }
     }
 
@@ -111,30 +145,8 @@ public class FileSystem {
         }
     }
 
-    public void createFile(Directory parent, String fileName) {
-        if (parent.getData().stream().anyMatch(f -> f.getName().equals(fileName))) {
-            System.out.println("File already exists: " + fileName);
-            return;
-        }
-
-        Arquive newFile = new Arquive(fileName, "", 0, 0);
-        parent.addData(newFile);
-        System.out.println("File created: " + fileName);
-    }
-
-    public void createDirectory(Directory parent, String dirName) {
-        if (parent.getChildrens().containsKey(dirName)) {
-            System.out.println("Directory already exists: " + dirName);
-            return;
-        }
-
-        Directory newDir = new Directory(dirName, parent, (byte) 1, 0);
-        parent.addSubdirectory(dirName, newDir);
-        System.out.println("Directory created: " + dirName);
-    }
-
-    public void debugDataArea(int index) throws IOException {
-        System.out.println(new String(disk.readDir(index)));
+    public String debugDataArea(int index) throws IOException {
+         return new String(disk.readDir(index));
 //
 //        Entry en = Entry.toEntry(disk.readDir(index));
 //        System.out.println(en);

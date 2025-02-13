@@ -70,6 +70,9 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
         if (match(TokenType.RMDIR)) {
             return commandRMDIR();
         }
+        if(match(TokenType.NANO)) {
+            return commandNANO();
+        }
 
         CommandCatcher.getInstance().getResults().add("\nUnexpected token: " + peek().lexeme);
         throw new RuntimeException("Unexpected token: " + peek().lexeme);
@@ -104,6 +107,13 @@ public class Parser extends CompilationPass<ScannedData, ParsedData> {
         String directory = peek().lexeme;
         advance();
         return new CommandMKDIR(directory);
+    }
+
+    private CommandNANO commandNANO(){
+        check(TokenType.IDENTIFIER);
+        String arquive = peek().lexeme;
+        advance();
+        return new CommandNANO(arquive);
     }
 
     private Token peek() {

@@ -23,6 +23,7 @@ public class Scanner extends CompilationPass<CMD,ScannedData> {
         keyWords.put("ls", TokenType.LS);
         keyWords.put("pwd", TokenType.PWD);
         keyWords.put("cd", TokenType.CD);
+        keyWords.put("nano",TokenType.NANO);
     };
     private String source;
     private int line;

@@ -2,12 +2,9 @@ package org.example.system.disk;
 
 import org.example.system.disk.handlers.FatHandler;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.*;
-
-import static org.example.system.disk.DiskUtils.*;
 
 public class FileAllocationTable {
 
@@ -36,6 +33,43 @@ public class FileAllocationTable {
         return clusters;
     }
 
+    public void reallocateFileSize(Entry entryFile) throws IOException {
+        List<Integer> clusters = findFileClusters(entryFile);
+        if(entryFile.getSize() == 0) return;
+        if(entryFile.getSize() + 1 > clusters.size()) {
+            int clusterIndex = clusters.get(clusters.size() - 2);
+            for(int i = 0; i < entryFile.getSize() - clusters.size() + 1; i ++) {
+                fileClusters[clusterIndex] = findFreeBlock();
+                clusterIndex = fileClusters[clusterIndex];
+                clusters.add(clusters.size() -1, clusterIndex);
+                System.out.println("Free block: " + clusterIndex);
+            }
+
+            fileClusters[clusterIndex] = EOF;
+            writeAllDataToDisk();
+        } else if(entryFile.getSize() + 1 < clusters.size()) {
+            int clusterIndex = clusters.get(entryFile.getSize());
+            fileClusters[clusters.get(entryFile.getSize() - 1)] = EOF;
+
+            for(int i = entryFile.getSize(); i < clusters.size() - entryFile.getSize() + 1; i ++) {
+                int tempClusterIndex = clusterIndex;
+                clusterIndex = fileClusters[tempClusterIndex];
+
+                if(clusterIndex == EOF) {
+                    fileClusters[tempClusterIndex] = FREE;
+                    break;
+                }
+
+                fileClusters[tempClusterIndex] = FREE;
+            }
+
+            writeAllDataToDisk();
+        }
+
+        System.out.println("File clusters: " + Arrays.toString(fileClusters));
+    }
+
+
     public int addFileCluster(Entry entryFile) throws IOException {
         ArrayList<Integer> clusters = new ArrayList<>();
 
@@ -49,7 +83,9 @@ public class FileAllocationTable {
             }
        }
        fileClusters[clusters.get(clusters.size() -1)] =  EOF;
+
        writeAllDataToDisk();
+
        return clusters.get(0);
     }
     public int findFreeBlock() {
