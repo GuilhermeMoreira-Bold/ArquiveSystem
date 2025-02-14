@@ -9,25 +9,49 @@ import java.io.IOException;
 import java.util.Map;
 
 import static org.example.system.disk.DiskUtils.*;
-
+/**
+ * A classe `FileSystem` representa o sistema de arquivos virtual, manipulando a estrutura de diretórios e arquivos,
+ * e interagindo com o disco virtual (`VirtualDisk`). Ela fornece métodos para navegação no sistema de arquivos, criação
+ * de arquivos e diretórios, e exibição do sistema de arquivos em forma de árvore.
+ */
 public class FileSystem {
     Directory root;
     Directory current;
     VirtualDisk disk;
     private final boolean MAINTAIN_DATA = true;
+
+    /**
+     * Retorna o diretório atual.
+     *
+     * @return o diretório atual
+     */
     public Directory getCurrent() {
         return current;
     }
 
+    /**
+     * Define o diretório atual.
+     *
+     * @param current o diretório a ser definido como o atual
+     */
     public void setCurrent(Directory current) {
         this.current = current;
     }
 
+    /**
+     * Constrói uma nova instância de `FileSystem` e inicializa o disco virtual, configurando o diretório raiz e o diretório atual.
+     *
+     * @throws IOException se ocorrer um erro ao acessar o disco virtual
+     */
     public FileSystem() throws IOException {
         disk = new VirtualDisk(MAINTAIN_DATA, DISK_NAME);
         initialize();
     }
-
+    /**
+     * Inicializa o sistema de arquivos a partir do disco virtual, lendo o diretório raiz e configurando o estado inicial.
+     *
+     * @throws IOException se ocorrer um erro ao ler os dados do disco
+     */
     private void initialize() throws IOException {
       byte[] buffer =  disk.readDir(0);
       Entry rootEntry = Entry.toEntry(buffer);
@@ -38,18 +62,33 @@ public class FileSystem {
           loadRootDirs();
       }
     }
-
+    /**
+     * Retorna o disco virtual associado ao sistema de arquivos.
+     *
+     * @return o disco virtual
+     */
     public VirtualDisk getDisk() {
         return disk;
     }
 
-
+    /**
+     * Carrega os subdiretórios do diretório raiz.
+     *
+     * @throws IOException se ocorrer um erro ao ler os dados do disco
+     */
     private void loadRootDirs() throws IOException {
         for (Map.Entry<String, Directory> dir :
                 root.getChildrens().entrySet()){
             addDataToDir(dir.getValue().getStaterBlock(),dir.getValue());
         }
     }
+    /**
+     * Adiciona dados a um diretório, lendo as entradas do disco virtual.
+     *
+     * @param index o índice do diretório no disco
+     * @param dir o diretório a ser atualizado
+     * @throws IOException se ocorrer um erro ao ler os dados do disco
+     */
     private void addDataToDir(int index, Directory dir) throws IOException {
         byte[] buffer = disk.readDir(index);
 
@@ -116,10 +155,21 @@ public class FileSystem {
             offset += ENTRY_SIZE;
         }
     }
+    /**
+     * Retorna uma representação do sistema de arquivos em formato de árvore.
+     *
+     * @return uma árvore representando o sistema de arquivos
+     */
 
     public DefaultMutableTreeNode getFileSystemTree() {
         return buildTree(root);
     }
+    /**
+     * Constrói recursivamente a árvore de diretórios e arquivos a partir do diretório fornecido.
+     *
+     * @param directory o diretório a partir do qual construir a árvore
+     * @return o nó raiz da árvore
+     */
 
     private FileSystemTreeNode buildTree(Directory directory) {
         FileSystemTreeNode node = new FileSystemTreeNode(directory.getName(), true);
@@ -134,6 +184,11 @@ public class FileSystem {
 
         return node;
     }
+
+    /**
+     * Classe interna que representa um nó na árvore de sistema de arquivos.
+     * Indica se o nó é um diretório ou não.
+     */
 
     public static class FileSystemTreeNode extends DefaultMutableTreeNode {
         private final boolean isDirectory;
