@@ -164,4 +164,20 @@ public class VirtualDisk {
         return dataArea.readEntry(clusterId);
    }
 
+    public long getClusterSize() {
+        return DiskUtils.CLUSTER_SIZE;
+    }
+
+   public int getUsedClusters() {
+        return fat.getUsedClusterCount();
+   }
+
+   public int getTotalClusters() {
+        return DiskUtils.TOTAL_BLOCKS;
+   }
+
+   public int[] getFileClustersArray() {
+       return Arrays.copyOf(fat.fileClusters, fat.fileClusters.length);
+   }
+
 }

@@ -69,7 +69,6 @@ public class FileAllocationTable {
         System.out.println("File clusters: " + Arrays.toString(fileClusters));
     }
 
-
     public int addFileCluster(Entry entryFile) throws IOException {
         ArrayList<Integer> clusters = new ArrayList<>();
 
@@ -88,6 +87,7 @@ public class FileAllocationTable {
 
        return clusters.get(0);
     }
+
     public int findFreeBlock() {
         for (int i = 0; i < fileClusters.length; i++) {
             if (fileClusters[i] == FREE) {
@@ -110,7 +110,28 @@ public class FileAllocationTable {
     public void writeAllDataToDisk() throws IOException {
         IOHandler.write(fileClusters);
     }
+
     public void printAllBlocks(){
         System.out.println("File clusters: " + Arrays.toString(fileClusters));
+    }
+
+    public int getUsedClusterCount() {
+        int count = 0;
+        for (int clusterValue : fileClusters) {
+            if (clusterValue != FREE) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int getFreeClusterCount() {
+        int count = 0;
+        for (int clusterValue : fileClusters) {
+            if (clusterValue == FREE) {
+                count++;
+            }
+        }
+        return count;
     }
 }
