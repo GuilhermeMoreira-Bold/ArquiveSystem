@@ -1,11 +1,11 @@
 package org.example;
 
-import org.example.compiler.interpreter.CommandExecutor;
-import org.example.compiler.parser.Parser;
-import org.example.compiler.pipeline.CompilationPipeline;
-import org.example.compiler.pipeline.execptions.UnexpectInputType;
-import org.example.compiler.scanner.Scanner;
-import org.example.compiler.util.CMD;
+import org.example.console.interpreter.CommandExecutor;
+import org.example.console.parser.Parser;
+import org.example.console.pipeline.CompilationPipeline;
+import org.example.console.pipeline.execptions.UnexpectInputType;
+import org.example.console.scanner.Scanner;
+import org.example.console.util.CMD;
 import org.example.gui.CommandCatcherStage;
 import org.example.gui.FileSystemGUI;
 import org.example.system.FileSystem;

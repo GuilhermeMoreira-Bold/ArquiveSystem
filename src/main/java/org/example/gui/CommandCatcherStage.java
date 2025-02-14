@@ -1,7 +1,7 @@
 package org.example.gui;
 
-import org.example.compiler.interpreter.CommandResult;
-import org.example.compiler.pipeline.pass.CompilationPass;
+import org.example.console.interpreter.CommandResult;
+import org.example.console.pipeline.pass.CompilationPass;
 
 import java.io.IOException;
 

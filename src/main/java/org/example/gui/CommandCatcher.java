@@ -1,7 +1,7 @@
 package org.example.gui;
 
-import org.example.compiler.interpreter.CommandResult;
-import org.example.compiler.pipeline.component.IOComponent;
+import org.example.console.interpreter.CommandResult;
+import org.example.console.pipeline.component.IOComponent;
 
 import java.util.ArrayList;
 import java.util.List;

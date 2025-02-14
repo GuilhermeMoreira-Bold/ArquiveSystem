@@ -1,31 +1,38 @@
 package org.example.gui;
 
-import org.example.compiler.interpreter.CommandExecutor;
-import org.example.compiler.parser.Parser;
-import org.example.compiler.pipeline.CompilationPipeline;
-import org.example.compiler.pipeline.execptions.UnexpectInputType;
-import org.example.compiler.scanner.Scanner;
-import org.example.compiler.util.CMD;
+import org.example.console.interpreter.CommandExecutor;
+import org.example.console.parser.Parser;
+import org.example.console.pipeline.CompilationPipeline;
+import org.example.console.pipeline.execptions.UnexpectInputType;
+import org.example.console.scanner.Scanner;
+import org.example.console.util.CMD;
+import org.example.gui.listeners.ExecuteCommandListener;
+import org.example.gui.panels.DiskUsagePanel;
+import org.example.gui.dialogs.ArquiveDialog;
+import org.example.gui.dialogs.DiskUsageDialog;
+import org.example.gui.menu.FileSystemMenuBar;
+import org.example.gui.panels.FileTreePanel;
+import org.example.gui.panels.TerminalPanel;
 import org.example.system.FileSystem;
-import org.example.system.directories.Directory;
+import org.example.system.arquives.Arquive;
+import org.example.system.disk.Entry;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
+
+import static org.example.system.disk.DiskUtils.*;
 
 
 public class FileSystemGUI extends JFrame {
     private final FileSystem fileSystem;
     private final CompilationPipeline pipeline;
-    private JTree fileTree;
-    private JTextArea outputArea;
-    private JTextField commandInput;
+    private FileTreePanel fileTreePanel;
+    private TerminalPanel terminalPanel;
+    private DiskUsagePanel diskPanelComponent;
 
     public FileSystemGUI() throws IOException {
         fileSystem = new FileSystem();
@@ -35,144 +42,88 @@ public class FileSystemGUI extends JFrame {
                 .insertStage(new CommandExecutor(fileSystem))
                 .insertStage(new CommandCatcherStage());
 
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
         initUI();
     }
 
     private void initUI() {
 
-        setTitle("File System Manager");
-        setSize(800, 600);
+        setTitle("Arquive System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setSize(1000, 600);
+        setLocationRelativeTo(null);
 
-        fileTree = new JTree(fileSystem.getFileSystemTree());
-        fileTree.setCellRenderer(new FileSystemTreeRenderer());
-        JScrollPane treeScroll = new JScrollPane(fileTree);
-        treeScroll.setPreferredSize(new Dimension(200, 600));
-        add(treeScroll, BorderLayout.WEST);
+        setJMenuBar(new FileSystemMenuBar(this));
 
-        JPopupMenu popupMenu = new JPopupMenu();
+        fileTreePanel = new FileTreePanel(fileSystem);
 
-        JMenuItem newFileMenuItem = new JMenuItem("New File");
-        JMenuItem newFolderMenuItem = new JMenuItem("New Folder");
+        diskPanelComponent = new DiskUsagePanel(fileSystem.getDisk());
 
-        newFileMenuItem.addActionListener(e -> {
-            TreePath selectedPath = fileTree.getSelectionPath();
-            if (selectedPath == null) return;
+        terminalPanel = new TerminalPanel();
 
-            FileSystem.FileSystemTreeNode selectedNode = (FileSystem.FileSystemTreeNode) selectedPath.getLastPathComponent();
-            if (!selectedNode.isDirectory()) return;
+        JSplitPane leftSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                fileTreePanel, diskPanelComponent);
+        leftSplit.setDividerLocation(350);
+        leftSplit.setOneTouchExpandable(true);
+        leftSplit.setDividerSize(12);
 
-            String fileName = JOptionPane.showInputDialog("Nome do novo arquivo:");
-            if (fileName == null || fileName.trim().isEmpty()) return;
+        JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                leftSplit, terminalPanel);
+        mainSplit.setDividerLocation(240);
+        mainSplit.setOneTouchExpandable(true);
+        mainSplit.setDividerSize(18);
 
-            Directory selectedDirectory = findDirectoryByPath(selectedPath);
-            if (selectedDirectory != null) {
-                fileSystem.createFile(selectedDirectory, fileName);
-                updateFileTree();
-            }
-        });
+        add(mainSplit, BorderLayout.CENTER);
 
-        newFolderMenuItem.addActionListener(e -> {
-            TreePath selectedPath = fileTree.getSelectionPath();
-            if (selectedPath == null) return;
+        ExecuteCommandListener listener = new ExecuteCommandListener(this, terminalPanel, pipeline, fileSystem);
+        terminalPanel.getCommandInput().addActionListener(listener);
+        terminalPanel.getExecuteButton().addActionListener(listener);
 
-            FileSystem.FileSystemTreeNode selectedNode = (FileSystem.FileSystemTreeNode) selectedPath.getLastPathComponent();
-            if (!selectedNode.isDirectory()) return;
+        updateFileTree();
 
-            String dirName = JOptionPane.showInputDialog("Nome da nova pasta:");
-            if (dirName == null || dirName.trim().isEmpty()) return;
+        updateDiskUsagePanel();
 
-            Directory selectedDirectory = findDirectoryByPath(selectedPath);
-            if (selectedDirectory != null) {
-                fileSystem.createDirectory(selectedDirectory, dirName);
-                updateFileTree();
-            }
-        });
-
-        popupMenu.add(newFileMenuItem);
-        popupMenu.add(newFolderMenuItem);
-
-        JPanel mainPanel = new JPanel(new BorderLayout());
-
-        outputArea = new JTextArea();
-        outputArea.setEditable(false);
-        JScrollPane outputScroll = new JScrollPane(outputArea);
-
-        JPanel commandPanel = new JPanel(new BorderLayout());
-        commandInput = new JTextField();
-        commandInput.addActionListener(new FileSystemGUI.ExecuteCommandListener());
-        JButton executeButton = new JButton("Enter");
-
-        commandPanel.add(commandInput, BorderLayout.CENTER);
-        commandPanel.add(executeButton, BorderLayout.EAST);
-
-        mainPanel.add(outputScroll, BorderLayout.CENTER);
-        mainPanel.add(commandPanel, BorderLayout.SOUTH);
-
-        add(mainPanel, BorderLayout.CENTER);
-
-        executeButton.addActionListener(new ExecuteCommandListener());
-        fileTree.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    int row = fileTree.getRowForLocation(e.getX(), e.getY());
-                    if (row != -1) {
-                        fileTree.setSelectionRow(row);
-                        popupMenu.show(fileTree, e.getX(), e.getY());
-                    }
-                }
-            }
-        });
-        SwingUtilities.invokeLater(() -> commandInput.requestFocusInWindow());
+        setVisible(true);
+        SwingUtilities.invokeLater(() -> terminalPanel.getCommandInput().requestFocusInWindow());
     }
 
-    private Directory findDirectoryByPath(TreePath path) {
-        Object[] nodes = path.getPath();
-        Directory currentDir = fileSystem.getRoot();
-
-        for (int i = 1; i < nodes.length; i++) {
-            String dirName = nodes[i].toString();
-            currentDir = currentDir.getChildrens().get(dirName);
-            if (currentDir == null) return null;
-        }
-
-        return currentDir;
-    }
-
-    private void updateFileTree() {
+    public void updateFileTree() {
         DefaultMutableTreeNode rootNode = fileSystem.getFileSystemTree();
-        fileTree.setModel(new javax.swing.tree.DefaultTreeModel(rootNode));
+        fileTreePanel.getFileTree().setModel(new javax.swing.tree.DefaultTreeModel(rootNode));
     }
 
-    private class ExecuteCommandListener implements ActionListener {
+    public void showArquiveDialog(Arquive a) {
+        ArquiveDialog dialog = new ArquiveDialog(this, a, newContent -> saveArquive(a, newContent));
+        dialog.setVisible(true);
+    }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String command = commandInput.getText();
-            if (!command.isEmpty()) {
-                try {
-                    pipeline.execute(new CMD(command));
-                    outputArea.setText("");
-
-                    StringBuilder sb = new StringBuilder();
-
-                    CommandCatcher catcher = CommandCatcher.getInstance();
-
-                    catcher.getResults().forEach((String result) -> {
-                        sb.append(result).append("\n");
-                    });
-
-                    outputArea.setText(sb.toString());
-                    updateFileTree();
-                } catch (UnexpectInputType | IOException | RuntimeException ex) {
-                    outputArea.setText(outputArea.getText() + "\n$ Error: " + command + " " + ex.getMessage() + "\n");
-                }
-                commandInput.setText("");
-            }
-
-            commandInput.setText("");
+    private void saveArquive(Arquive base, String newContent) {
+        try {
+            fileSystem.getDisk().editEntry(
+                            new Entry(base.getName(),
+                            base.getStaterBlock(),
+                            fileSystem.getCurrent().getStaterBlock(),
+                            (int) Math.ceil((double) newContent.length() / CLUSTER_DATA_AREA_SIZE),
+                            BIT_ARQUIVE,
+                            BIT_FILLED),
+                            newContent);
+            base.setData(newContent);
+        } catch(IOException ex){
+            throw new RuntimeException(ex);
         }
+    }
+
+    public void showDiskUsageDialog() {
+        DiskUsageDialog dialog = new DiskUsageDialog(this, fileSystem.getDisk());
+        dialog.setVisible(true);
+    }
+
+    public void updateDiskUsagePanel() {
+        diskPanelComponent.updateDiskInfo();
     }
 }
