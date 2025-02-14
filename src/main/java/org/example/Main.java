@@ -1,11 +1,11 @@
 package org.example;
 
-import org.example.compiler.interpreter.CommandExecutor;
-import org.example.compiler.parser.Parser;
-import org.example.compiler.pipeline.CompilationPipeline;
-import org.example.compiler.pipeline.execptions.UnexpectInputType;
-import org.example.compiler.scanner.Scanner;
-import org.example.compiler.util.CMD;
+import org.example.console.interpreter.CommandExecutor;
+import org.example.console.parser.Parser;
+import org.example.console.pipeline.CompilationPipeline;
+import org.example.console.pipeline.execptions.UnexpectInputType;
+import org.example.console.scanner.Scanner;
+import org.example.console.util.CMD;
 import org.example.gui.CommandCatcherStage;
 import org.example.gui.FileSystemGUI;
 import org.example.system.FileSystem;
@@ -40,7 +40,7 @@ public class Main {
         } else {
             try {
                 CompilationPipeline pipeline = new CompilationPipeline();
-                CMD cmd = new CMD("src/main/resources/cmd.test", true);
+                CMD cmd = new CMD("C:\\Users\\Eric Dourado\\Documents\\Projects\\java\\Final\\ArquiveSystem\\src\\main\\resources\\cmd.test", true);
                 FileSystem fl = new FileSystem();
 
                 pipeline.insertStage(new Scanner())

@@ -99,13 +99,17 @@ public class FileSystem {
                     dir.addData(arquivo);
                 }
 
-                for(Arquive a : dir.getData()){
-                    if(a.getName().equals(arquivo.getName())){
+                boolean exists = false;
 
-                    }else{
-                        dir.addData(arquivo);
-                        return;
+                for (Arquive a : dir.getData()) {
+                    if (a.getName().equals(arquivo.getName())) {
+                        exists = true;
+                        break;
                     }
+                }
+
+                if (!exists) {
+                    dir.addData(arquivo);
                 }
             }
 
