@@ -40,7 +40,7 @@ public class Main {
         } else {
             try {
                 CompilationPipeline pipeline = new CompilationPipeline();
-                CMD cmd = new CMD("C:\\Users\\Eric Dourado\\Documents\\Projects\\java\\Final\\ArquiveSystem\\src\\main\\resources\\cmd.test", true);
+                CMD cmd = new CMD("src/main/resources/cmd.test", true);
                 FileSystem fl = new FileSystem();
 
                 pipeline.insertStage(new Scanner())
