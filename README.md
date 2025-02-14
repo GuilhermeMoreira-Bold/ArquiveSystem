@@ -72,6 +72,116 @@ O sistema fornece várias operações de leitura e escrita tanto para os dados d
 5. **Desalocação de Arquivos e Diretórios**: Quando arquivos ou diretórios são removidos, a FAT é atualizada para liberar os blocos, e os dados no disco podem ser apagados.
 
 ---
+# Tutorial de Comandos do Sistema de Arquivos Simulado
+
+O sistema de arquivos simulado suporta comandos básicos para manipulação de diretórios e arquivos. Abaixo está uma explicação de cada comando disponível.
+
+## 📂 Criando Diretórios (`mkdir`)
+Cria um novo diretório dentro do diretório atual.
+
+**Sintaxe:**
+
+mkdir nome_do_diretorio
+
+**Exemplo:**
+
+mkdir projetos
+
+Isso criará um diretório chamado `projetos`.
+
+---
+
+## 📄 Criando Arquivos (`touch`)
+Cria um novo arquivo vazio dentro do diretório atual.
+
+**Sintaxe:**
+
+touch nome_do_arquivo
+
+**Exemplo:**
+
+touch notas.txt
+
+Isso criará um arquivo chamado `notas.txt`.
+
+---
+
+## 🗑️ Removendo Arquivos ou Diretórios (`rm`)
+Remove um arquivo ou diretório vazio.
+
+**Sintaxe:**
+
+rm nome_do_arquivo_ou_diretorio
+
+**Exemplo (removendo um arquivo):**
+
+rm notas.txt
+
+Isso removerá o arquivo `notas.txt`.
+
+**Exemplo (removendo um diretório vazio):**
+
+rm projetos
+
+Isso removerá o diretório `projetos` se ele estiver vazio.
+
+---
+
+## 📂 Navegando entre Diretórios (`cd`)
+Muda para um diretório dentro do diretório atual.
+
+**Sintaxe:**
+
+cd nome_do_diretorio
+
+**Exemplo:**
+
+cd projetos
+
+Isso entrará no diretório `projetos`.
+
+⚠️ **Importante:** O sistema **não suporta** navegação direta para subdiretórios encadeados. Isso significa que **não é possível** executar um comando como:
+
+cd /usr/example1/example2
+
+Em vez disso, é necessário navegar diretório por diretório:
+
+cd usr cd example1 cd example2
+
+
+---
+
+## ✏️ Editando Arquivos (`nano`)
+Abre um arquivo para edição.
+
+**Sintaxe:**
+
+nano nome_do_arquivo
+
+**Exemplo:**
+
+nano notas.txt
+
+Isso abrirá o arquivo `notas.txt` para edição.
+
+---
+
+## 🔗 Executando Múltiplos Comandos
+Os comandos podem ser executados em sequência na mesma linha utilizando `;` como separador.
+
+**Exemplo:**
+
+mkdir projetos; cd projetos; touch app.java; nano app.java
+
+Isso criará um diretório `projetos`, entrará nele, criará um arquivo `app.java` e abrirá o editor para esse arquivo.
+
+---
+
+## 💡 Dicas
+- Utilize esses comandos para gerenciar arquivos e diretórios de forma eficiente dentro do sistema de arquivos simulado.
+- Caso queira confirmar a criação de arquivos ou diretórios, utilize comandos de listagem (
+
+---
 
 ## Conclusão
 
